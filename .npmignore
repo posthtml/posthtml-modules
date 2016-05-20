@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+*.swp
+coverage
+.nyc_output
+test
+.editorconfig
+.gitattributes
+.travis.yml

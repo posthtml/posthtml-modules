@@ -1,0 +1,44 @@
+{
+  "name": "posthtml-modules",
+  "version": "0.0.0",
+  "description": "Posthtml modules processing",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava",
+    "pretest": "xo"
+  },
+  "keywords": [
+    "posthtml",
+    "posthtml-modules",
+    "parser",
+    "transform",
+    "html",
+    "module"
+  ],
+  "author": "Aleksandr Yakunichev <canvaskisa@gmail.com> (https://github.com/canvaskisa)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canvaskisa/posthtml-modules.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canvaskisa/posthtml-modules/issues"
+  },
+  "homepage": "https://github.com/canvaskisa/posthtml-modules",
+  "dependencies": {
+    "posthtml": "^0.8.7",
+    "posthtml-match-helper": "^1.0.1"
+  },
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "nyc": "^6.4.4",
+    "xo": "^0.15.1"
+  },
+  "nyc": {
+    "lines": 100,
+    "branches": 100,
+    "statements": 100,
+    "functions": 100,
+    "check-coverage": true
+  }
+}

@@ -1,0 +1,58 @@
+# Posthtml-modules <img align="right" width="220" height="200" title="PostHTML logo" src="http://posthtml.github.io/posthtml/logo.svg">
+
+[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
+
+## Installation
+```console
+$ npm i --save posthtml-modules
+```
+
+## Usage
+```html
+<!-- index.html -->
+<html>
+<body>
+  <module href="./module.html"></module>
+</body>
+</html>
+```
+
+```html
+<!-- module.html -->
+<header>
+	<h1>Title</h1>
+</header>
+```
+
+```js
+/* index.js */
+var fs = require('fs');
+var posthtml = require('posthtml');
+
+posthtml([
+	require('posthtml-modules')()
+]).process(fs.readFileSync('index.html', 'utf8')).then(function(result) {
+	return result; 
+
+	/**
+	 * <html>
+	 *	<body>
+	 *	  <header>
+	 *			<h1>Title</h1>
+	 *		</header>
+	 *	</body>
+	 * </html>
+	 */
+})
+```
+
+## Api
+```js
+options = {
+	context: './', // root path for modules lookup,
+	plugins: [] // posthtml plugins to apply for every parsed module
+};
+```
+
+## License
+MIT © [Aleksandr Yakunichev](https://github.com/canvaskisa)

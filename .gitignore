@@ -1,0 +1,11 @@
+# Mac
+.DS_Store
+
+# Node
+node_modules
+npm-debug.log
+.nyc_output
+coverage
+
+# Swap
+.swp
