@@ -11,7 +11,7 @@ module.exports = function plugin(options) {
 	options.plugins = options.plugins || [];
 
 	return function parse(tree) {
-		const promises = [];
+		var promises = [];
 
 		tree.match(match('module[href]'), function (module) {
 			promises.push(new Promise(function (resolve, reject) {
