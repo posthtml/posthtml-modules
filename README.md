@@ -14,7 +14,9 @@ $ npm i --save posthtml-modules
 <!-- index.html -->
 <html>
 <body>
-  <module href="./module.html"></module>
+  <module href="./module.html">
+    title
+  </module>
 </body>
 </html>
 ```
@@ -22,7 +24,9 @@ $ npm i --save posthtml-modules
 ```html
 <!-- module.html -->
 <header>
-  <h1>Title</h1>
+  <h1>
+    Test <content></content>
+  </h1>
 </header>
 ```
 
@@ -41,7 +45,7 @@ posthtml()
      * <html>
      *  <body>
      *    <header>
-     *      <h1>Title</h1>
+     *      <h1>Test title</h1>
      *    </header>
      *  </body>
      * </html>

@@ -20,7 +20,14 @@ module.exports = function plugin(options) {
 				});
 			}).then(function (content) {
 				return posthtml(options.plugins).use(function (tree) {
-					return tree; // Must return tree here, so the next `then` can match it
+					tree.match(match('content'), function () {
+						return {
+							tag: false,
+							content: module.content || ''
+						};
+					});
+
+					return tree;
 				}).process(content);
 			}).then(function (processed) {
 				return parse(processed.tree);
