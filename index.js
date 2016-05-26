@@ -19,7 +19,7 @@ module.exports = function plugin(options) {
 					return err ? reject(err) : resolve(res);
 				});
 			}).then(function (content) {
-				return posthtml(options.plugins).use(function (tree) {
+				return posthtml([function (tree) {
 					tree.match(match('content'), function () {
 						return {
 							tag: false,
@@ -27,6 +27,8 @@ module.exports = function plugin(options) {
 						};
 					});
 
+					return tree;
+				}].concat(options.plugins)).use(function (tree) {
 					return tree;
 				}).process(content);
 			}).then(function (processed) {
