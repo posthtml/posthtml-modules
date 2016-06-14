@@ -1,3 +1,4 @@
+import path from 'path';
 import test from 'ava';
 import posthtml from 'posthtml';
 import plugin from '..';
@@ -19,4 +20,10 @@ test('Must replace <content/> with module\'s content', async t => {
 	const expected = `<div><button type="button">ButtonTest</button>\n</div>`;
 	const {html} = await posthtml().use(plugin()).process(actual);
 	t.is(html, expected);
+});
+
+test('Must resolve href\'s correctly', async t => {
+	const actual = '<div class="container"><module href="./header"></module></div>'
+	const {html} = await posthtml().use(plugin({context: path.resolve(__dirname, 'tree.spec')})).process(actual);
+	console.log(html);
 });
