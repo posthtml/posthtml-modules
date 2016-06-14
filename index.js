@@ -37,7 +37,9 @@ module.exports = function plugin(options) {
 						return prev instanceof Error ? curr : prev;
 					});
 
-					return result instanceof Error ? reject(result) : resolve(result);
+					return result instanceof Error ?
+						reject(new Error('ENOENT: posthtml-modules module lookups failed. Was looking for a module here:\n' + lookups.join('\n'))) :
+						resolve(result);
 				});
 			}).then(function (content) {
 				return posthtml([function (tree) {

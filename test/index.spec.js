@@ -12,7 +12,15 @@ test('Must include html', async t => {
 
 test('Must fail when module\'s href cannot be found', async t => {
 	const actual = `<div><module href="./undefined.html"></module></div>`;
-	t.throws(posthtml().use(plugin()).process(actual));
+	const lookups = [
+		path.resolve(__dirname, './/undefined.html'),
+		path.resolve(__dirname, './undefined/index.html')
+	];
+
+	t.throws(
+		posthtml().use(plugin()).process(actual),
+		'ENOENT: posthtml-modules module lookups failed. Was looking for a module here:\n' + lookups.join('\n')
+	);
 });
 
 test('Must replace <content/> with module\'s content', async t => {
@@ -23,7 +31,8 @@ test('Must replace <content/> with module\'s content', async t => {
 });
 
 test('Must resolve href\'s correctly', async t => {
-	const actual = '<div class="container"><module href="./header"></module></div>'
+	const actual = '<div class="container"><module href="./header"></module></div>';
+	const expected = '<div class="container"><header class="header"><nav class="nav"><button class="button"></button></nav></header></div>';
 	const {html} = await posthtml().use(plugin({context: path.resolve(__dirname, 'tree.spec')})).process(actual);
-	console.log(html);
+	t.is(html.replace(/(\n|\t)/g, ''), expected);
 });
