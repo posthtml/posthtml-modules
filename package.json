@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/canvaskisa/posthtml-modules",
   "dependencies": {
-    "posthtml": "^0.8.7",
     "posthtml-match-helper": "^1.0.1"
   },
   "devDependencies": {
     "ava": "^0.14.0",
     "nyc": "^6.4.4",
+    "posthtml": "^0.8.7",
     "xo": "^0.15.1"
   },
   "nyc": {
