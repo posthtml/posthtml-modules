@@ -56,7 +56,7 @@ posthtml()
 ## Api
 ```js
 options = {
-  context: './', // root path for modules lookup,
+  root: './', // root path for modules lookup,
   plugins: [] // posthtml plugins to apply for every parsed module
 };
 ```
