@@ -33,6 +33,6 @@ test('Must replace <content/> with module\'s content', async t => {
 test('Must resolve href\'s correctly', async t => {
 	const actual = '<div class="container"><module href="./header"></module></div>';
 	const expected = '<div class="container"><header class="header"><nav class="nav"><button class="button"></button></nav></header></div>';
-	const {html} = await posthtml().use(plugin({context: path.resolve(__dirname, 'tree.spec')})).process(actual);
+	const {html} = await posthtml().use(plugin({root: path.resolve(__dirname, 'tree.spec')})).process(actual);
 	t.is(html.replace(/(\n|\t)/g, ''), expected);
 });
