@@ -1,4 +1,3 @@
-import path from 'path';
 import test from 'ava';
 import posthtml from 'posthtml';
 import plugin from '..';
@@ -12,15 +11,7 @@ test('Must include html', async t => {
 
 test('Must fail when module\'s href cannot be found', async t => {
 	const actual = `<div><module href="./undefined.html"></module></div>`;
-	const lookups = [
-		path.resolve(__dirname, './/undefined.html'),
-		path.resolve(__dirname, './undefined/index.html')
-	];
-
-	t.throws(
-		posthtml().use(plugin()).process(actual),
-		'ENOENT: posthtml-modules module lookups failed. Was looking for a module here:\n' + lookups.join('\n')
-	);
+	t.throws(posthtml().use(plugin()).process(actual));
 });
 
 test('Must replace <content/> with module\'s content', async t => {
@@ -31,8 +22,8 @@ test('Must replace <content/> with module\'s content', async t => {
 });
 
 test('Must resolve href\'s correctly', async t => {
-	const actual = '<div class="container"><module href="./header"></module></div>';
+	const actual = '<div class="container"><module href="./tree.spec/header/index.html"></module></div>';
 	const expected = '<div class="container"><header class="header"><nav class="nav"><button class="button"></button></nav></header></div>';
-	const {html} = await posthtml().use(plugin({root: path.resolve(__dirname, 'tree.spec')})).process(actual);
+	const {html} = await posthtml().use(plugin({root: './tree.spec', from: __filename})).process(actual);
 	t.is(html.replace(/(\n|\t)/g, ''), expected);
 });
