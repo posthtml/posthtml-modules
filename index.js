@@ -38,7 +38,7 @@ function processNodeContentWithPosthtml(node, options) {
  * @return {Promise<String>} [Promise with file content's]
  */
 function readFile(options, href) {
-	const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
+	var filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
 
 	return new Promise(function (resolve, reject) {
 		return fs.readFile(filePath, 'utf8', function (err, res) {
