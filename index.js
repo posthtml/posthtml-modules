@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var posthtml = require('posthtml');
 var match = require('posthtml-match-helper');
+var render = require('posthtml-render');
 
 /**
  * process every node content with posthtml
@@ -80,10 +81,43 @@ function parse(options) {
 
 module.exports = function plugin(options) {
 	options = options || {};
+	options.initial = options.initial || false;
+	options.plugins = options.plugins || [];
+	options.root = path.resolve(options.root || './');
+	options.from = options.from || '';
 
-	return parse({
-		plugins: options.plugins || [],
-		root: path.resolve(options.root || './'),
-		from: options.from || ''
-	});
+	return function (tree) {
+		if (options.initial) {
+			var parsed = parse(options)(tree);
+
+			/**
+			 * Move posthtml content processing
+			 * to function, avoid code duplicates 👓
+			 * see processNodeContentWithPosthtml also
+			 */
+			if (parsed instanceof Promise) {
+				return parsed.then(function (content) {
+					return posthtml(
+						typeof options.plugins === 'function' ? // apply plugins to posthtml subprocessing
+							/* istanbul ignore next */
+							options.plugins(options.from) :
+							options.plugins
+					).process(render(content)).then(function (result) {
+						return result.tree;
+					});
+				});
+			}
+
+			return posthtml(
+				typeof options.plugins === 'function' ? // apply plugins to posthtml subprocessing
+					/* istanbul ignore next */
+					options.plugins(options.from) :
+					options.plugins
+			).process(render(parsed)).then(function (result) {
+				return result.tree;
+			});
+		}
+
+		return parse(options)(tree);
+	};
 };

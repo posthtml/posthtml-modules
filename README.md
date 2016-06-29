@@ -58,7 +58,8 @@ posthtml()
 options = {
   root: './', // (String) root path for modules lookup,
   plugins: [], // (Array || Function) posthtml plugins to apply for every parsed module, if a function provided – it will be called with module's file path
-  from: '' // (String) root filename for processing apply, needed for path resolving (it's better to always provide it)
+  from: '' // (String) root filename for processing apply, needed for path resolving (it's better to always provide it),
+  initial: false // (Boolean) apply plugins to root file after modules processing 
 };
 ```
 
