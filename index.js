@@ -73,6 +73,13 @@ function parse(options) {
 	};
 }
 
+/**
+ * @param  {Array | Function} plugins [array of plugins to apply or function, which will be called with from option]
+ * @param  {String}           from    [path to the processing file]
+ * @param  {Object} 					content [posthtml tree to process]
+ * @param  {Array}            prepend [array of plugins to process before plugins param]
+ * @return {Object}                   [processed poshtml tree]
+ */
 function processWithPostHtml(plugins, from, content, prepend) {
 	return posthtml((prepend || []).concat(
 		typeof plugins === 'function' ? plugins(from) : plugins
@@ -92,11 +99,6 @@ module.exports = function plugin(options) {
 		if (options.initial) {
 			var parsed = parse(options)(tree);
 
-			/**
-			 * Move posthtml content processing
-			 * to function, avoid code duplicates 👓
-			 * see processNodeContentWithPosthtml also
-			 */
 			if (parsed instanceof Promise) {
 				return parsed.then(function (content) {
 					return processWithPostHtml(options.plugins, options.from, content);
