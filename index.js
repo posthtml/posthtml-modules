@@ -14,21 +14,15 @@ var render = require('posthtml-render');
  */
 function processNodeContentWithPosthtml(node, options) {
 	return function (content) {
-		return posthtml(
-			[function (tree) { // remove <content> tags and replace them with node's content
-				return tree.match(match('content'), function () {
-					return {
-						tag: false,
-						content: node.content || ''
-					};
-				});
-			}].concat(
-				typeof options.plugins === 'function' ? // apply plugins to posthtml subprocessing
-					/* istanbul ignore next */
-					options.plugins(path.join(path.dirname(options.from), node.attrs.href)) :
-					options.plugins
-			)
-		).process(content);
+		return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [function (tree) {
+			// remove <content> tags and replace them with node's content
+			return tree.match(match('content'), function () {
+				return {
+					tag: false,
+					content: node.content || ''
+				};
+			});
+		}]);
 	};
 }
 
@@ -60,10 +54,10 @@ function parse(options) {
 			promises.push(
 				readFile(options, node.attrs.href)
 					.then(processNodeContentWithPosthtml(node, options))
-					.then(function (processed) { // Recursively call parse with node's content tree
+					.then(function (tree) { // Recursively call parse with node's content tree
 						return parse(Object.assign({}, options, {
 							from: path.join(path.dirname(options.from), node.attrs.href)
-						}))(processed.tree);
+						}))(tree);
 					}).then(function (content) { // remove <module> tag and set inner content
 						node.tag = false;
 						node.content = content;
@@ -77,6 +71,14 @@ function parse(options) {
 			return tree;
 		}) : tree;
 	};
+}
+
+function processWithPostHtml(plugins, from, content, prepend) {
+	return posthtml((prepend || []).concat(
+		typeof plugins === 'function' ? plugins(from) : plugins
+	)).process(render(content)).then(function (result) {
+		return result.tree;
+	});
 }
 
 module.exports = function plugin(options) {
@@ -97,25 +99,11 @@ module.exports = function plugin(options) {
 			 */
 			if (parsed instanceof Promise) {
 				return parsed.then(function (content) {
-					return posthtml(
-						typeof options.plugins === 'function' ? // apply plugins to posthtml subprocessing
-							/* istanbul ignore next */
-							options.plugins(options.from) :
-							options.plugins
-					).process(render(content)).then(function (result) {
-						return result.tree;
-					});
+					return processWithPostHtml(options.plugins, options.from, content);
 				});
 			}
 
-			return posthtml(
-				typeof options.plugins === 'function' ? // apply plugins to posthtml subprocessing
-					/* istanbul ignore next */
-					options.plugins(options.from) :
-					options.plugins
-			).process(render(parsed)).then(function (result) {
-				return result.tree;
-			});
+			return processWithPostHtml(options.plugins, options.from, parsed);
 		}
 
 		return parse(options)(tree);
