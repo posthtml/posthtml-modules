@@ -17,10 +17,7 @@ function processNodeContentWithPosthtml(node, options) {
 		return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [function (tree) {
 			// remove <content> tags and replace them with node's content
 			return tree.match(match('content'), function () {
-				return {
-					tag: false,
-					content: node.content || ''
-				};
+				return node.content || '';
 			});
 		}]);
 	};
