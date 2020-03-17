@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
-const fs = require('fs')
-const path = require('path')
-const posthtml = require('posthtml')
-const match = require('posthtml-match-helper')
-const render = require('posthtml-render')
+const fs = require('fs');
+const path = require('path');
+const posthtml = require('posthtml');
+const match = require('posthtml-match-helper');
+const render = require('posthtml-render');
 
 /**
 * Process every node content with posthtml
@@ -16,9 +16,9 @@ function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [function (tree) {
       // Remove <content> tags and replace them with node's content
-      return tree.match(match('content'), () => node.content || '')
-    }])
-  }
+      return tree.match(match('content'), () => node.content || '');
+    }]);
+  };
 }
 
 /**
@@ -28,11 +28,11 @@ function processNodeContentWithPosthtml(node, options) {
 * @return {Promise<String>} [Promise with file content's]
 */
 function readFile(options, href) {
-  const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href)
+  const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
 
   return new Promise((resolve, reject) => {
-    return fs.readFile(filePath, 'utf8', (error, response) => error ? reject(error) : resolve(response))
-  })
+    return fs.readFile(filePath, 'utf8', (error, response) => error ? reject(error) : resolve(response));
+  });
 }
 
 /**
@@ -41,7 +41,7 @@ function readFile(options, href) {
 */
 function parse(options) {
   return function (tree) {
-    const promises = []
+    const promises = [];
 
     tree.match(match('module[href]'), node => {
       promises.push(
@@ -50,19 +50,19 @@ function parse(options) {
           .then(tree => { // Recursively call parse with node's content tree
             return parse(Object.assign({}, options, {
               from: path.join(path.dirname(options.from), node.attrs.href)
-            }))(tree)
+            }))(tree);
           })
           .then(content => { // remove <module> tag and set inner content
-            node.tag = false
-            node.content = content
+            node.tag = false;
+            node.content = content;
           })
-      )
+      );
 
-      return node
-    })
+      return node;
+    });
 
-    return promises.length > 0 ? Promise.all(promises).then(() => tree) : tree
-  }
+    return promises.length > 0 ? Promise.all(promises).then(() => tree) : tree;
+  };
 }
 
 /**
@@ -75,27 +75,27 @@ function parse(options) {
 function processWithPostHtml(plugins, from, content, prepend) {
   return posthtml((prepend || []).concat(
     typeof plugins === 'function' ? plugins(from) : plugins
-  )).process(render(content)).then(result => result.tree)
+  )).process(render(content)).then(result => result.tree);
 }
 
 module.exports = options => {
-  options = options || {}
-  options.initial = options.initial || false
-  options.plugins = options.plugins || []
-  options.root = path.resolve(options.root || './')
-  options.from = options.from || ''
+  options = options || {};
+  options.initial = options.initial || false;
+  options.plugins = options.plugins || [];
+  options.root = path.resolve(options.root || './');
+  options.from = options.from || '';
 
   return function (tree) {
     if (options.initial) {
-      const parsed = parse(options)(tree)
+      const parsed = parse(options)(tree);
 
       if (parsed instanceof Promise) {
-        return parsed.then(content => processWithPostHtml(options.plugins, options.from, content))
+        return parsed.then(content => processWithPostHtml(options.plugins, options.from, content));
       }
 
-      return processWithPostHtml(options.plugins, options.from, parsed)
+      return processWithPostHtml(options.plugins, options.from, parsed);
     }
 
-    return parse(options)(tree)
-  }
-}
+    return parse(options)(tree);
+  };
+};
