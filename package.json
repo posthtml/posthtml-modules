@@ -41,5 +41,8 @@
     "statements": 100,
     "functions": 100,
     "check-coverage": true
+  },
+  "engines": {
+    "node": ">=10"
   }
 }
