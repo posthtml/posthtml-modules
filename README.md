@@ -70,6 +70,34 @@ posthtml()
 </html>
 ```
 
+## Component options
+
+#### `locals`
+
+Object containing any local variables that you want to be accessible inside the module. Must be a valid JSON object, otherwise it will be ignored.
+
+Example:
+
+```handlebars
+<!-- index.html -->
+<module href="./module.html" locals='{"foo": "strong"}'>
+  <p>Or so they say...</p>
+</module>
+```
+
+```handlebars
+<!-- module.html -->
+<p>The foo is {{ foo }} in this one.</p>
+<content></content>
+```
+
+### Result
+
+```html
+<p>The foo is strong in this one.</p>
+<p>Or so they say...</p>
+```
+
 <h2 align="center">LICENSE</h2>
 
 > MIT License (MIT)
