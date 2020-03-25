@@ -71,3 +71,39 @@ test('Must call plugins option with from value if it is a function', async t => 
     }
   })).process('<div class="test"></div>');
 });
+
+test('Must parse locals if locals prop is passed and it contains a valid JSON string', async t => {
+  const actual = `<div class="test"><module href="./test/locals.spec.html" locals='{"foo": "bar"}'>Test</module></div>`;
+  const expected = `<div class="test"><button type="button">foo is: bar - Test</button></div>`;
+
+  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must not parse locals if locals prop is passed but is not a valid JSON string', async t => {
+  const actual = `<div class="test"><module href="./test/locals.spec.html" locals="test">Test</module></div>`;
+  const expected = `<div class="test"><button type="button">foo is: {{ foo }} - Test</button></div>`;
+
+  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must not try to parse locals if locals prop is missing', async t => {
+  const actual = `<div class="test"><module href="./test/locals.spec.html">Test</module></div>`;
+  const expected = `<div class="test"><button type="button">foo is: {{ foo }} - Test</button></div>`;
+
+  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must not parse locals if locals prop is passed but is empty', async t => {
+  const actual = `<div class="test"><module href="./test/locals.spec.html" locals="">Test</module></div>`;
+  const expected = `<div class="test"><button type="button">foo is: {{ foo }} - Test</button></div>`;
+
+  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});

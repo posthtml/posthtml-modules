@@ -3,8 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 const posthtml = require('posthtml');
-const match = require('posthtml-match-helper');
 const render = require('posthtml-render');
+const match = require('posthtml-match-helper');
+const expressions = require('posthtml-expressions');
 
 /**
 * Process every node content with posthtml
@@ -14,11 +15,27 @@ const render = require('posthtml-render');
 */
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
-    return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [function (tree) {
-      // Remove <content> tags and replace them with node's content
-      return tree.match(match('content'), () => node.content || '');
-    }]);
+    return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [
+      parseLocals(node.attrs.locals),
+      function (tree) {
+        // Remove <content> tags and replace them with node's content
+        return tree.match(match('content'), () => node.content || '');
+      }
+    ]);
   };
+}
+
+/**
+ *
+ * @param   {String}    locals  [string to parse as locals object]
+ * @return  {Function}          [Function containing evaluated locals, or empty object]
+ */
+function parseLocals(locals) {
+  try {
+    return expressions({locals: JSON.parse(locals)});
+  } catch {
+    return () => {};
+  }
 }
 
 /**

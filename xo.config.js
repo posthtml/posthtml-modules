@@ -1,9 +1,10 @@
 module.exports = {
   space: true,
   rules: {
+    'prefer-object-spread': 0,
     'capitalized-comments': 0,
-    quotes: ['error', 'single', {allowTemplateLiterals: true}],
+    'unicorn/string-content': 0,
     'promise/prefer-await-to-then': 0,
-    'prefer-object-spread': 0
+    quotes: ['error', 'single', {allowTemplateLiterals: true}]
   }
 };
