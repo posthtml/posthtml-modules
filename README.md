@@ -13,7 +13,7 @@
 ## Install
 
 ```bash
-npm i posthtml-modules
+npm i -D posthtml-modules
 ```
 
 ## Example
