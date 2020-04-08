@@ -95,14 +95,13 @@ function processWithPostHtml(plugins, from, content, prepend) {
   )).process(render(content)).then(result => result.tree);
 }
 
-module.exports = options => {
-  options = options || {};
-  options.initial = options.initial || false;
-  options.plugins = options.plugins || [];
-  options.root = path.resolve(options.root || './');
+module.exports = (options = {}) => {
   options.from = options.from || '';
   options.tag = options.tag || 'module';
+  options.plugins = options.plugins || [];
+  options.initial = options.initial || false;
   options.attribute = options.attribute || 'href';
+  options.root = path.resolve(options.root || './');
 
   return function (tree) {
     if (options.initial) {
