@@ -59,9 +59,8 @@ function readFile(options, href) {
 function parse(options) {
   return function (tree) {
     const promises = [];
-    const tag = options.tag || 'module';
 
-    tree.match(match(`${tag}[href]`), node => {
+    tree.match(match(`${options.tag}[href]`), node => {
       promises.push(
         readFile(options, node.attrs.href)
           .then(processNodeContentWithPosthtml(node, options))
@@ -102,6 +101,7 @@ module.exports = options => {
   options.plugins = options.plugins || [];
   options.root = path.resolve(options.root || './');
   options.from = options.from || '';
+  options.tag = options.tag || 'module';
 
   return function (tree) {
     if (options.initial) {
