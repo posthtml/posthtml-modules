@@ -107,3 +107,21 @@ test('Must not parse locals if locals prop is passed but is empty', async t => {
 
   t.is(html, expected);
 });
+
+test('Must use custom tag name if it was provided in options', async t => {
+  const actual = `<div><component href="./test/test.spec.html">Test</component></div>`;
+  const expected = `<div><button type="button">ButtonTest</button></div>`;
+
+  const html = await posthtml().use(plugin({tag: 'component'})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must use custom attribute name if it was provided in options', async t => {
+  const actual = `<div><module src="./test/test.spec.html">Test</module></div>`;
+  const expected = `<div><button type="button">ButtonTest</button></div>`;
+
+  const html = await posthtml().use(plugin({attribute: 'src'})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});

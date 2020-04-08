@@ -15,7 +15,7 @@ const expressions = require('posthtml-expressions');
 */
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
-    return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs.href), content, [
+    return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
       parseLocals(node.attrs.locals),
       function (tree) {
         // Remove <content> tags and replace them with node's content
@@ -60,13 +60,13 @@ function parse(options) {
   return function (tree) {
     const promises = [];
 
-    tree.match(match('module[href]'), node => {
+    tree.match(match(`${options.tag}[${options.attribute}]`), node => {
       promises.push(
-        readFile(options, node.attrs.href)
+        readFile(options, node.attrs[options.attribute])
           .then(processNodeContentWithPosthtml(node, options))
           .then(tree => { // Recursively call parse with node's content tree
             return parse(Object.assign({}, options, {
-              from: path.join(path.dirname(options.from), node.attrs.href)
+              from: path.join(path.dirname(options.from), node.attrs[options.attribute])
             }))(tree);
           })
           .then(content => { // remove <module> tag and set inner content
@@ -95,12 +95,13 @@ function processWithPostHtml(plugins, from, content, prepend) {
   )).process(render(content)).then(result => result.tree);
 }
 
-module.exports = options => {
-  options = options || {};
-  options.initial = options.initial || false;
-  options.plugins = options.plugins || [];
-  options.root = path.resolve(options.root || './');
+module.exports = (options = {}) => {
   options.from = options.from || '';
+  options.tag = options.tag || 'module';
+  options.plugins = options.plugins || [];
+  options.initial = options.initial || false;
+  options.attribute = options.attribute || 'href';
+  options.root = path.resolve(options.root || './');
 
   return function (tree) {
     if (options.initial) {
