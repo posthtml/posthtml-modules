@@ -59,8 +59,9 @@ function readFile(options, href) {
 function parse(options) {
   return function (tree) {
     const promises = [];
+    const tag = options.tag || 'module';
 
-    tree.match(match('module[href]'), node => {
+    tree.match(match(`${tag}[href]`), node => {
       promises.push(
         readFile(options, node.attrs.href)
           .then(processNodeContentWithPosthtml(node, options))
