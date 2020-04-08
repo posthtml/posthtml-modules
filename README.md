@@ -64,45 +64,51 @@ posthtml()
 
 ### `root`
 
-Default: `'./'`
+Type: `string`\
+Default: `./`
 
-(String) root path for modules lookup.
+Root path for modules lookup.
 
 ### `plugins`
 
+Type: `array | function`\
 Default: `[]`
 
-(Array|Function) posthtml plugins to apply for every parsed module. 
+PostHTML plugins to apply for every parsed module. 
 
 If a function provided, it will be called with module's file path.
 
 ### `from`
 
-Default `''`
+Type: `string`\
+Default: `''`
 
-(String) root filename for processing apply, needed for path resolving (it's better to always provide it).
+Root filename for processing apply, needed for path resolving (it's better to always provide it).
 
 ### `initial`
 
+Type: `boolean`\
 Default: `false`
 
-(Boolean) apply plugins to root file after modules processing.
+Apply plugins to root file after modules processing.
 
 ### `tag`
 
-Default: `'module'`
+Type: `string`\
+Default: `module`
 
-(String) use a custom tag name.
+Use a custom tag name.
 
 ### `attribute`
 
-Default: `'href'`
+Type: `string`\
+Default: `href`
 
-(String) use a custom attribute name.
+Use a custom attribute name.
 
 ## Component options
 
-#### `locals`
+### `locals`
 
 You can pass data to a module using a `locals=""` attribute.
 
@@ -111,16 +117,16 @@ Must be a valid JSON object.
 Example:
 
 ```handlebars
+<!-- module.html -->
+<p>The foo is {{ foo }} in this one.</p>
+<content></content>
+```
+
+```handlebars
 <!-- index.html -->
 <module href="./module.html" locals='{"foo": "strong"}'>
   <p>Or so they say...</p>
 </module>
-```
-
-```handlebars
-<!-- module.html -->
-<p>The foo is {{ foo }} in this one.</p>
-<content></content>
 ```
 
 ### Result
