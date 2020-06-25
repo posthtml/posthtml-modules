@@ -16,11 +16,7 @@ const expressions = require('posthtml-expressions');
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
-      parseLocals(node.attrs.locals),
-      function (tree) {
-        // Remove <content> tags and replace them with node's content
-        return tree.match(match('content'), () => node.content || '');
-      }
+      parseLocals(node.attrs.locals)
     ]);
   };
 }
@@ -69,7 +65,10 @@ function parse(options) {
               from: path.join(path.dirname(options.from), node.attrs[options.attribute])
             }))(tree);
           })
-          .then(content => { // remove <module> tag and set inner content
+          .then(tree => {
+            // Remove <content> tags and replace them with node's content
+            const content = tree.match(match('content'), () => node.content || '');
+            // Remove <module> tag and set inner content
             node.tag = false;
             node.content = content;
           })
