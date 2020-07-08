@@ -70,13 +70,13 @@ function parse(options) {
             // Remove <content> tags and replace them with node's content
             const content = tree.match(match('content'), () => {
               if (
-                node.content && 
-                node.attrs && 
+                node.content &&
+                node.attrs &&
                 isJSON(node.attrs.locals)
               ) {
                 return parseLocals(node.attrs.locals)(node.content);
               }
-              
+
               return node.content || '';
             });
             // Remove <module> tag and set inner content
