@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const isJSON = require('is-json');
 const posthtml = require('posthtml');
 const render = require('posthtml-render');
 const match = require('posthtml-match-helper');
@@ -67,7 +68,17 @@ function parse(options) {
           })
           .then(tree => {
             // Remove <content> tags and replace them with node's content
-            const content = tree.match(match('content'), () => node.content || '');
+            const content = tree.match(match('content'), () => {
+              if (
+                node.content && 
+                node.attrs && 
+                isJSON(node.attrs.locals)
+              ) {
+                return parseLocals(node.attrs.locals)(node.content);
+              }
+              
+              return node.content || '';
+            });
             // Remove <module> tag and set inner content
             node.tag = false;
             node.content = content;
