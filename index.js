@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const isJSON = require('is-json');
 const posthtml = require('posthtml');
+const {match: nativeMatch} = require('posthtml/lib/api');
 const render = require('posthtml-render');
 const match = require('posthtml-match-helper');
 const expressions = require('posthtml-expressions');
@@ -36,59 +37,50 @@ function parseLocals(locals) {
 }
 
 /**
-* readFile
+* readFileSync
 * @param  {Object} options  [plugin options object]
 * @param  {String} href     [node's href attribute value]
-* @return {Promise<String>} [Promise with file content's]
+* @return {String} [file content's]
 */
-function readFile(options, href) {
+function readFileSync(options, href) {
   const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
 
-  return new Promise((resolve, reject) => {
-    return fs.readFile(filePath, 'utf8', (error, response) => error ? reject(error) : resolve(response));
-  });
+  return fs.readFileSync(filePath, 'utf8');
 }
 
 /**
 * @param  {Object} options   [plugin options]
-* @return {Promise | Object} [posthtml tree or promise]
+* @return {Object} [posthtml tree]
 */
 function parse(options) {
   return function (tree) {
-    const promises = [];
+    nativeMatch.call(tree, match(`${options.tag}[${options.attribute}]`), node => {
+      const contentSource = readFileSync(options, node.attrs[options.attribute]);
+      // Recursively call parse with node's content tree
+      const contentTree = parse(Object.assign({}, options, {
+        from: path.join(path.dirname(options.from), node.attrs[options.attribute])
+      }))(processNodeContentWithPosthtml(node, options)(contentSource));
+      // Remove <content> tags and replace them with node's content
+      const content = nativeMatch.call(contentTree, match('content'), () => {
+        if (
+          node.content &&
+          node.attrs &&
+          isJSON(node.attrs.locals)
+        ) {
+          return parseLocals(node.attrs.locals)(node.content);
+        }
 
-    tree.match(match(`${options.tag}[${options.attribute}]`), node => {
-      promises.push(
-        readFile(options, node.attrs[options.attribute])
-          .then(processNodeContentWithPosthtml(node, options))
-          .then(tree => { // Recursively call parse with node's content tree
-            return parse(Object.assign({}, options, {
-              from: path.join(path.dirname(options.from), node.attrs[options.attribute])
-            }))(tree);
-          })
-          .then(tree => {
-            // Remove <content> tags and replace them with node's content
-            const content = tree.match(match('content'), () => {
-              if (
-                node.content &&
-                node.attrs &&
-                isJSON(node.attrs.locals)
-              ) {
-                return parseLocals(node.attrs.locals)(node.content);
-              }
+        return node.content || '';
+      });
 
-              return node.content || '';
-            });
-            // Remove <module> tag and set inner content
-            node.tag = false;
-            node.content = content;
-          })
-      );
+      // Remove <module> tag and set inner content
+      node.tag = false;
+      node.content = content;
 
       return node;
     });
 
-    return promises.length > 0 ? Promise.all(promises).then(() => tree) : tree;
+    return tree;
   };
 }
 
@@ -102,7 +94,7 @@ function parse(options) {
 function processWithPostHtml(plugins, from, content, prepend) {
   return posthtml((prepend || []).concat(
     typeof plugins === 'function' ? plugins(from) : plugins
-  )).process(render(content)).then(result => result.tree);
+  )).process(render(content), {sync: true}).tree;
 }
 
 module.exports = (options = {}) => {
