@@ -1,5 +1,12 @@
+## <small>0.6.4 (2020-11-17)</small>
+
+* revert: fix nesting randomly fails when locals are provided ([36e2689](https://github.com/canvaskisa/posthtml-modules/commit/36e2689))
+
+
+
 ## <small>0.6.3 (2020-11-17)</small>
 
+* 0.6.3 ([5e5dea9](https://github.com/canvaskisa/posthtml-modules/commit/5e5dea9))
 * build: update build system ([982ebf5](https://github.com/canvaskisa/posthtml-modules/commit/982ebf5))
 * build: update dep dev ([c6e29e8](https://github.com/canvaskisa/posthtml-modules/commit/c6e29e8))
 * build(deps): bump lodash from 4.17.15 to 4.17.19 ([d65f7c4](https://github.com/canvaskisa/posthtml-modules/commit/d65f7c4))

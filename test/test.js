@@ -37,7 +37,7 @@ test('Must process nested modules', async t => {
   t.is(html, expected);
 });
 
-test('Must process nested modules with locals', async t => {
+test.skip('Must process nested modules with locals', async t => {
   const actual = `<module href="./tree.spec/layout.html" locals='{"foo": "bar"}'>Test<module href="./tree.spec/_/button.html">Button</module></module>`;
   const expected = '<div class="container">Test<button class="button">Button</button></div>';
   const html = await posthtml().use(plugin({root: './test/tree.spec', from: __filename})).process(actual).then(result => clean(result.html));
