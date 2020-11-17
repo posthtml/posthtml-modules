@@ -1,0 +1,15 @@
+{
+  "ignores": [
+    "test/**",
+    "tmp/**",
+    "lib/**",
+    ".idea/**",
+    "*.{html,jpg}"
+  ],
+  "rules": {
+    "cli": "off",
+    "xo": "off",
+    "ava": "off",
+    "use-travis": "off"
+  }
+}

@@ -37,6 +37,13 @@ test('Must process nested modules', async t => {
   t.is(html, expected);
 });
 
+test('Must process nested modules with locals', async t => {
+  const actual = `<module href="./tree.spec/layout.html" locals='{"foo": "bar"}'>Test<module href="./tree.spec/_/button.html">Button</module></module>`;
+  const expected = '<div class="container">Test<button class="button">Button</button></div>';
+  const html = await posthtml().use(plugin({root: './test/tree.spec', from: __filename})).process(actual).then(result => clean(result.html));
+  t.is(html, expected);
+});
+
 test('Must process initial tree if initial prop is passed', async t => {
   const actual = `<div class="test"><module href="./test.spec.html">Test</module></div>`;
   const expected = `<div class="processed"><button type="button">ButtonTest</button></div>`;
