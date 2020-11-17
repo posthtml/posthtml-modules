@@ -1,6 +1,6 @@
 {
   "name": "posthtml-modules",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Posthtml modules processing",
   "license": "MIT",
   "repository": "canvaskisa/posthtml-modules",
