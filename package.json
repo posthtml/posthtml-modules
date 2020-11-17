@@ -2,10 +2,17 @@
   "name": "posthtml-modules",
   "version": "0.6.2",
   "description": "Posthtml modules processing",
+  "license": "MIT",
+  "repository": "canvaskisa/posthtml-modules",
+  "author": "Aleksandr Yakunichev <canvaskisa@gmail.com> (https://github.com/canvaskisa)",
   "main": "index.js",
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
-    "test": "nyc ava",
-    "pretest": "xo"
+    "version": "conventional-changelog -i changelog.md -s -r 0 && git add changelog.md",
+    "test": "c8 ava",
+    "pretest": "clinton && xo"
   },
   "keywords": [
     "posthtml",
@@ -15,16 +22,6 @@
     "html",
     "module"
   ],
-  "author": "Aleksandr Yakunichev <canvaskisa@gmail.com> (https://github.com/canvaskisa)",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/canvaskisa/posthtml-modules.git"
-  },
-  "bugs": {
-    "url": "https://github.com/canvaskisa/posthtml-modules/issues"
-  },
-  "homepage": "https://github.com/canvaskisa/posthtml-modules",
   "dependencies": {
     "is-json": "^2.0.1",
     "posthtml-expressions": "^1.4.5",
@@ -32,19 +29,15 @@
     "posthtml-render": "^1.2.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-angular": "^11.0.0",
     "ava": "^3.10.1",
-    "nyc": "^15.1.0",
+    "c8": "^7.3.5",
+    "clinton": "^0.14.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.1",
     "posthtml": "^0.13.1",
     "xo": "^0.32.1"
-  },
-  "nyc": {
-    "lines": 100,
-    "branches": 100,
-    "statements": 100,
-    "functions": 100,
-    "check-coverage": true
-  },
-  "engines": {
-    "node": ">=10"
   }
 }
