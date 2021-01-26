@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "is-json": "^2.0.1",
+    "lodash": "^4.17.20",
     "posthtml-expressions": "^1.4.5",
     "posthtml-match-helper": "^1.0.1",
     "posthtml-render": "^1.2.2"

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const isJSON = require('is-json');
+const {merge} = require('lodash');
 const posthtml = require('posthtml');
 const render = require('posthtml-render');
 const match = require('posthtml-match-helper');
@@ -17,7 +18,7 @@ const expressions = require('posthtml-expressions');
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
-      parseLocals(node.attrs.locals)
+      parseLocals(node.attrs.locals, options.locals)
     ]);
   };
 }
@@ -27,9 +28,11 @@ function processNodeContentWithPosthtml(node, options) {
  * @param   {String}    locals  [string to parse as locals object]
  * @return  {Function}          [Function containing evaluated locals, or empty object]
  */
-function parseLocals(locals) {
+function parseLocals(attributeLocals = {}, optionLocals = {}) {
   try {
-    return expressions({locals: JSON.parse(locals)});
+    const locals = merge(JSON.parse(attributeLocals), optionLocals);
+
+    return expressions({locals});
   } catch {
     return () => {};
   }
@@ -112,6 +115,7 @@ module.exports = (options = {}) => {
   options.initial = options.initial || false;
   options.attribute = options.attribute || 'href';
   options.root = path.resolve(options.root || './');
+  options.locals = options.locals || {};
 
   return function (tree) {
     if (options.initial) {
