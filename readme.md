@@ -106,6 +106,15 @@ Default: `href`
 
 Use a custom attribute name.
 
+### `locals`
+
+Type: `object`\
+Default: `{}`
+
+Pass data to the module.
+
+Will be merged with the JSON object from the `locals=""` attribute, if present.
+
 ## Component options
 
 ### `locals`
