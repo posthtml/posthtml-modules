@@ -3,9 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 const isJSON = require('is-json');
-const {merge} = require('lodash');
 const posthtml = require('posthtml');
 const render = require('posthtml-render');
+const {merge, isEmpty} = require('lodash');
 const match = require('posthtml-match-helper');
 const expressions = require('posthtml-expressions');
 
@@ -18,7 +18,7 @@ const expressions = require('posthtml-expressions');
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
-      parseLocals(node.attrs.locals, options.locals)
+      parseLocals(options.locals, node.attrs.locals)
     ]);
   };
 }
@@ -28,13 +28,13 @@ function processNodeContentWithPosthtml(node, options) {
  * @param   {String}    locals  [string to parse as locals object]
  * @return  {Function}          [Function containing evaluated locals, or empty object]
  */
-function parseLocals(attributeLocals = {}, optionLocals = {}) {
+function parseLocals(optionLocals, attributeLocals) {
   try {
     const locals = merge(optionLocals, JSON.parse(attributeLocals));
 
     return expressions({locals});
   } catch {
-    return () => {};
+    return expressions({locals: optionLocals});
   }
 }
 
@@ -77,7 +77,11 @@ function parse(options) {
                 node.attrs &&
                 isJSON(node.attrs.locals)
               ) {
-                return parseLocals(node.attrs.locals, options.locals)(node.content);
+                return parseLocals(options.locals, node.attrs.locals)(node.content);
+              }
+
+              if (!isEmpty(options.locals)) {
+                return parseLocals(options.locals)(node.content);
               }
 
               return node.content || '';
