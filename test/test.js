@@ -140,16 +140,25 @@ test('Must use custom attribute name if it was provided in options', async t => 
   t.is(html, expected);
 });
 
-test('Must parse locals passed to <content>', async t => {
-  const actual = `<div class="test"><module href="./test/locals.spec.html" locals='{"foo": "bar"}'>{{ foo }}</module></div>`;
-  const expected = `<div class="test"><button type="button">foo is: bar - bar</button></div>`;
+test('Must parse attribute locals passed to <content>', async t => {
+  const actual = `<module href="./test/locals.option.spec.html" locals='{"inlineFoo": "bar"}'>{{ optionFoo }}</module>`;
+  const expected = `<div>    Locals attribute: bar    Locals option: undefined    undefined</div>`;
 
   const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
 
-test('Must parse locals passed as option', async t => {
+test('Must parse options locals passed to <content>', async t => {
+  const actual = `<module href="./test/locals.option.spec.html">{{ optionFoo }}</module>`;
+  const expected = `<div>    Locals attribute: undefined    Locals option: optionBar    optionBar</div>`;
+
+  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must parse all locals', async t => {
   const actual = `<module href="./test/locals.option.spec.html" locals='{"inlineFoo": "inlineBar"}'>{{ optionFoo }}</module>`;
   const expected = `<div>    Locals attribute: inlineBar    Locals option: optionBar    optionBar</div>`;
 
