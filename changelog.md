@@ -1,5 +1,18 @@
+## 0.7.0 (2021-01-27)
+
+* build: fix lint runer ([6104a41](https://github.com/canvaskisa/posthtml-modules/commit/6104a41))
+* build: update dep dev ([b17cd71](https://github.com/canvaskisa/posthtml-modules/commit/b17cd71))
+* build(deps): bump ini from 1.3.5 to 1.3.8 ([cd6ae66](https://github.com/canvaskisa/posthtml-modules/commit/cd6ae66))
+* chore: update readme.md ([985e6c4](https://github.com/canvaskisa/posthtml-modules/commit/985e6c4))
+* chore: update readme.md ([a5db69a](https://github.com/canvaskisa/posthtml-modules/commit/a5db69a))
+* refactor: switch merging order ([79aa010](https://github.com/canvaskisa/posthtml-modules/commit/79aa010))
+* feat: pass locals as option ([ce06f76](https://github.com/canvaskisa/posthtml-modules/commit/ce06f76))
+
+
+
 ## <small>0.6.4 (2020-11-17)</small>
 
+* 0.6.4 ([0a6b456](https://github.com/canvaskisa/posthtml-modules/commit/0a6b456))
 * revert: fix nesting randomly fails when locals are provided ([36e2689](https://github.com/canvaskisa/posthtml-modules/commit/36e2689))
 
 
