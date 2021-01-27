@@ -113,7 +113,7 @@ Default: `{}`
 
 Pass data to the module.
 
-Will be merged with the JSON object from the `locals=""` attribute, if present.
+If present, the JSON object from the `locals=""` attribute will be merged on top of this, overwriting any existing values.
 
 ## Component options
 
