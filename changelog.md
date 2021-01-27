@@ -1,5 +1,12 @@
+## <small>0.7.1 (2021-01-27)</small>
+
+* fix: parse options locals when passed as content ([5f928c8](https://github.com/canvaskisa/posthtml-modules/commit/5f928c8))
+
+
+
 ## 0.7.0 (2021-01-27)
 
+* 0.7.0 ([1ebfb1b](https://github.com/canvaskisa/posthtml-modules/commit/1ebfb1b))
 * build: fix lint runer ([6104a41](https://github.com/canvaskisa/posthtml-modules/commit/6104a41))
 * build: update dep dev ([b17cd71](https://github.com/canvaskisa/posthtml-modules/commit/b17cd71))
 * build(deps): bump ini from 1.3.5 to 1.3.8 ([cd6ae66](https://github.com/canvaskisa/posthtml-modules/commit/cd6ae66))
