@@ -30,7 +30,7 @@ function processNodeContentWithPosthtml(node, options) {
  */
 function parseLocals(attributeLocals = {}, optionLocals = {}) {
   try {
-    const locals = merge(JSON.parse(attributeLocals), optionLocals);
+    const locals = merge(optionLocals, JSON.parse(attributeLocals));
 
     return expressions({locals});
   } catch {
