@@ -150,8 +150,8 @@ test('Must parse locals passed to <content>', async t => {
 });
 
 test('Must parse locals passed as option', async t => {
-  const actual = `<module href="./test/locals.option.spec.html" locals='{"inlineFoo": "inlineBar"}'>test</module>`;
-  const expected = `<div>    Locals attribute: inlineBar    Locals option: optionBar    test</div>`;
+  const actual = `<module href="./test/locals.option.spec.html" locals='{"inlineFoo": "inlineBar"}'>{{ optionFoo }}</module>`;
+  const expected = `<div>    Locals attribute: inlineBar    Locals option: optionBar    optionBar</div>`;
 
   const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}})).process(actual).then(result => clean(result.html));
 

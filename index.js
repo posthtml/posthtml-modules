@@ -77,7 +77,7 @@ function parse(options) {
                 node.attrs &&
                 isJSON(node.attrs.locals)
               ) {
-                return parseLocals(node.attrs.locals)(node.content);
+                return parseLocals(node.attrs.locals, options.locals)(node.content);
               }
 
               return node.content || '';
