@@ -1,4 +1,4 @@
 {
-  "{src,test}/**/*.js": "eslint",
-  "*.md": "eslint"
+  "{src,test}/**/*.js": "xo",
+  "*.md": "xo"
 }
