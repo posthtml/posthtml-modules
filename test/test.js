@@ -166,3 +166,12 @@ test('Must parse all locals', async t => {
 
   t.is(html, expected);
 });
+
+test('Must work with locals provided in options but no content passed', async t => {
+  const actual = `<module href="./test/locals.option.spec.html"></module>`;
+  const expected = `<div>    Locals attribute: undefined    Locals option: optionBar    </div>`;
+
+  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});

@@ -80,7 +80,7 @@ function parse(options) {
                 return parseLocals(options.locals, node.attrs.locals)(node.content);
               }
 
-              if (!isEmpty(options.locals)) {
+              if (node.content && !isEmpty(options.locals)) {
                 return parseLocals(options.locals)(node.content);
               }
 
