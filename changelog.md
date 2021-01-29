@@ -1,5 +1,13 @@
+## <small>0.7.3 (2021-01-29)</small>
+
+* fix: locals option and no content passed ([0b0f76a](https://github.com/canvaskisa/posthtml-modules/commit/0b0f76a))
+* test: fails with locals option and no content passed ([0865f5d](https://github.com/canvaskisa/posthtml-modules/commit/0865f5d))
+
+
+
 ## <small>0.7.2 (2021-01-28)</small>
 
+* 0.7.2 ([d2888d3](https://github.com/canvaskisa/posthtml-modules/commit/d2888d3))
 * fix: parse options locals in <content> ([6d01304](https://github.com/canvaskisa/posthtml-modules/commit/6d01304))
 * test: fails to parse options locals in <content> ([724cc58](https://github.com/canvaskisa/posthtml-modules/commit/724cc58))
 
