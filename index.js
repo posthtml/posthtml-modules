@@ -17,7 +17,7 @@ const expressions = require('posthtml-expressions');
 */
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
-    return processWithPostHtml(options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
+    return processWithPostHtml(options.parser, options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
       parseLocals(options.locals, node.attrs.locals)
     ]);
   };
@@ -100,36 +100,38 @@ function parse(options) {
 }
 
 /**
+* @param  {Object} 					 options [posthtml options]
 * @param  {Array | Function} plugins [array of plugins to apply or function, which will be called with from option]
 * @param  {String}           from    [path to the processing file]
 * @param  {Object} 					 content [posthtml tree to process]
 * @param  {Array}            prepend [array of plugins to process before plugins param]
 * @return {Object}                   [processed poshtml tree]
 */
-function processWithPostHtml(plugins, from, content, prepend) {
+function processWithPostHtml(options, plugins, from, content, prepend) {
   return posthtml((prepend || []).concat(
     typeof plugins === 'function' ? plugins(from) : plugins
-  )).process(render(content)).then(result => result.tree);
+  )).process(render(content), options).then(result => result.tree);
 }
 
 module.exports = (options = {}) => {
   options.from = options.from || '';
+  options.locals = options.locals || {};
+  options.parser = options.parser || {};
   options.tag = options.tag || 'module';
   options.plugins = options.plugins || [];
   options.initial = options.initial || false;
   options.attribute = options.attribute || 'href';
   options.root = path.resolve(options.root || './');
-  options.locals = options.locals || {};
 
   return function (tree) {
     if (options.initial) {
       const parsed = parse(options)(tree);
 
       if (parsed instanceof Promise) {
-        return parsed.then(content => processWithPostHtml(options.plugins, options.from, content));
+        return parsed.then(content => processWithPostHtml(options.parser, options.plugins, options.from, content));
       }
 
-      return processWithPostHtml(options.plugins, options.from, parsed);
+      return processWithPostHtml(options.parser, options.plugins, options.from, parsed);
     }
 
     return parse(options)(tree);

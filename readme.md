@@ -115,6 +115,15 @@ Pass data to the module.
 
 If present, the JSON object from the `locals=""` attribute will be merged on top of this, overwriting any existing values.
 
+### `parser`
+
+Type: `object`\
+Default: `{}`
+
+Options for the PostHTML parser.  
+
+By default, [`posthtml-parser`](https://github.com/posthtml/posthtml-parser) is used.
+
 ## Component options
 
 ### `locals`

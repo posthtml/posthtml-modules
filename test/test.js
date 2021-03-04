@@ -175,3 +175,14 @@ test('Must work with locals provided in options but no content passed', async t 
 
   t.is(html, expected);
 });
+
+test('Must use parser options', async t => {
+  const actual = `PHP code in parent: <?php echo $foo; ?> <module href="./test/posthtml.spec.html"></module>`;
+  const expected = `PHP code in parent: <?php echo $foo; ?> PHP code in module: <?php echo $bar; ?>`;
+
+  const posthtmlOptions = {directives: [{name: '?php', start: '<', end: '>'}]};
+
+  const html = await posthtml().use(plugin({parser: posthtmlOptions})).process(actual, posthtmlOptions).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
