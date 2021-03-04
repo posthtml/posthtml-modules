@@ -1,5 +1,13 @@
+## <small>0.7.4 (2021-03-04)</small>
+
+* build: update dep dev ([0822508](https://github.com/canvaskisa/posthtml-modules/commit/0822508))
+* feat: use parser options ([bdd819c](https://github.com/canvaskisa/posthtml-modules/commit/bdd819c))
+
+
+
 ## <small>0.7.3 (2021-01-29)</small>
 
+* 0.7.3 ([425bd89](https://github.com/canvaskisa/posthtml-modules/commit/425bd89))
 * fix: locals option and no content passed ([0b0f76a](https://github.com/canvaskisa/posthtml-modules/commit/0b0f76a))
 * test: fails with locals option and no content passed ([0865f5d](https://github.com/canvaskisa/posthtml-modules/commit/0865f5d))
 
