@@ -1,6 +1,7 @@
 module.exports = {
   space: true,
   rules: {
+    'max-params': 0,
     'ava/no-skip-test': 0,
     'prefer-object-spread': 0,
     'capitalized-comments': 0,
