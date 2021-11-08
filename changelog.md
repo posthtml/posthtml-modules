@@ -1,5 +1,17 @@
+## <small>0.7.5 (2021-11-08)</small>
+
+* fix: fix locals merge ([8076414](https://github.com/canvaskisa/posthtml-modules/commit/8076414))
+* build(deps): bump browserslist from 4.16.3 to 4.16.6 ([5c33e57](https://github.com/canvaskisa/posthtml-modules/commit/5c33e57))
+* build(deps): bump handlebars from 4.7.6 to 4.7.7 ([161cbc6](https://github.com/canvaskisa/posthtml-modules/commit/161cbc6))
+* build(deps): bump hosted-git-info from 2.8.8 to 2.8.9 ([2b71581](https://github.com/canvaskisa/posthtml-modules/commit/2b71581))
+* build(deps): bump normalize-url from 4.5.0 to 4.5.1 ([3a44749](https://github.com/canvaskisa/posthtml-modules/commit/3a44749))
+* build(deps): bump path-parse from 1.0.6 to 1.0.7 ([d397fef](https://github.com/canvaskisa/posthtml-modules/commit/d397fef))
+
+
+
 ## <small>0.7.4 (2021-03-04)</small>
 
+* 0.7.4 ([f3404a7](https://github.com/canvaskisa/posthtml-modules/commit/f3404a7))
 * build: update dep dev ([0822508](https://github.com/canvaskisa/posthtml-modules/commit/0822508))
 * feat: use parser options ([bdd819c](https://github.com/canvaskisa/posthtml-modules/commit/bdd819c))
 
