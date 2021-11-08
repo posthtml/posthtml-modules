@@ -1,5 +1,11 @@
+## <small>0.7.6 (2021-11-08)</small>
+
+
+
+
 ## <small>0.7.5 (2021-11-08)</small>
 
+* 0.7.5 ([b34bb60](https://github.com/canvaskisa/posthtml-modules/commit/b34bb60))
 * fix: fix locals merge ([8076414](https://github.com/canvaskisa/posthtml-modules/commit/8076414))
 * build(deps): bump browserslist from 4.16.3 to 4.16.6 ([5c33e57](https://github.com/canvaskisa/posthtml-modules/commit/5c33e57))
 * build(deps): bump handlebars from 4.7.6 to 4.7.7 ([161cbc6](https://github.com/canvaskisa/posthtml-modules/commit/161cbc6))
