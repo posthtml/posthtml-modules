@@ -1,5 +1,14 @@
+## 0.8.0 (2021-12-01)
+
+* feat: add attribute/value to locals, close #76 ([2b96b22](https://github.com/canvaskisa/posthtml-modules/commit/2b96b22)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
+* docs: add attribute/value to locals, #76 ([5a79b35](https://github.com/canvaskisa/posthtml-modules/commit/5a79b35)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
+* test: add attribute/value to locals, #76 ([2b49df4](https://github.com/canvaskisa/posthtml-modules/commit/2b49df4)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
+
+
+
 ## <small>0.7.6 (2021-11-08)</small>
 
+* 0.7.6 ([0d0a5c8](https://github.com/canvaskisa/posthtml-modules/commit/0d0a5c8))
 
 
 
