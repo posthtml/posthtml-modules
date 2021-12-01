@@ -115,6 +115,13 @@ Pass data to the module.
 
 If present, the JSON object from the `locals=""` attribute will be merged on top of this, overwriting any existing values.
 
+### `attributeAsLocals`
+
+Type: `boolean`\
+Default: `false`
+
+All attributes on `<module></module>` will be added to [locals](#locals)
+
 ### `parser`
 
 Type: `object`\
@@ -152,6 +159,39 @@ Example:
 ```html
 <p>The foo is strong in this one.</p>
 <p>Or so they say...</p>
+```
+
+### `attributeAsLocals`
+
+All attributes on `<module></module>` will be added to [locals](#locals)
+
+Example:
+
+```handlebars
+<!-- module.html -->
+<div class="{{ class }}" id="{{ id }}" style="{{ style }}">
+  <content></content>
+</div>
+```
+
+```handlebars
+<!-- index.html -->
+<module 
+  href="module.html" 
+  class="text-center uppercase" 
+  id="example"
+  style="display: flex; gap: 2;"
+>
+  Module content
+</module>
+```
+
+### Result
+
+```html
+<div class="text-center uppercase" id="example" style="display: flex; gap: 2;">
+  Module content
+</div>
 ```
 
 [npm]: https://img.shields.io/npm/v/posthtml-modules.svg
