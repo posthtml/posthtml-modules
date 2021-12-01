@@ -186,3 +186,12 @@ test('Must use parser options', async t => {
 
   t.is(html, expected);
 });
+
+test('Must parse attribute as locals', async t => {
+  const actual = `<module href="./test/attribute.as.locals.spec.html" class="text-center uppercase" id="example" style="display: flex; gap: 2;">Module content</module>`;
+  const expected = `<div class="text-center uppercase" id="example" style="display: flex; gap: 2;">Module content</div>`;
+
+  const html = await posthtml().use(plugin({attributeAsLocals: true})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
