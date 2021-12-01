@@ -18,7 +18,7 @@ const expressions = require('posthtml-expressions');
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.parser, options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
-      parseLocals(options.locals, node.attrs.locals)
+      parseLocals({options, node}, options.locals, node.attrs.locals)
     ]);
   };
 }
@@ -28,13 +28,21 @@ function processNodeContentWithPosthtml(node, options) {
  * @param   {String}    locals  [string to parse as locals object]
  * @return  {Function}          [Function containing evaluated locals, or empty object]
  */
-function parseLocals(optionLocals, attributeLocals) {
+function parseLocals({options, node}, optionLocals, attributeLocals) {
+  const attrLocals = options.attributeAsLocals ? {...node.attrs} : {};
+  if (options.attributeAsLocals) {
+    delete attrLocals.href;
+    delete attrLocals.locals;
+  }
+
   try {
-    const locals = merge({...optionLocals}, JSON.parse(attributeLocals));
+    const locals = merge({...optionLocals}, {...attrLocals}, JSON.parse(attributeLocals));
 
     return expressions({locals});
   } catch {
-    return expressions({locals: optionLocals});
+    const locals = merge({...optionLocals}, {...attrLocals});
+
+    return expressions({locals});
   }
 }
 
@@ -77,11 +85,15 @@ function parse(options) {
                 node.attrs &&
                 isJSON(node.attrs.locals)
               ) {
-                return parseLocals(options.locals, node.attrs.locals)(node.content);
+                return parseLocals({options, node}, options.locals, node.attrs.locals)(node.content);
+              }
+
+              if (node.content && node.attrs && options.attributeAsLocals) {
+                return parseLocals({options, node}, options.locals, {})(node.content);
               }
 
               if (node.content && !isEmpty(options.locals)) {
-                return parseLocals(options.locals)(node.content);
+                return parseLocals({options, node}, options.locals)(node.content);
               }
 
               return node.content || '';
@@ -122,6 +134,7 @@ module.exports = (options = {}) => {
   options.initial = options.initial || false;
   options.attribute = options.attribute || 'href';
   options.root = path.resolve(options.root || './');
+  options.attributeAsLocals = options.attributeAsLocals || false;
 
   return function (tree) {
     if (options.initial) {
