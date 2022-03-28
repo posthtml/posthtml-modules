@@ -65,12 +65,12 @@ function readFile(options, href) {
 * @return {Promise | Object} [posthtml tree or promise]
 */
 function parse(options) {
-  return function (tree) {
+  return async function (tree) {
     const promises = [];
 
     tree.match(match(`${options.tag}[${options.attribute}]`), node => {
       promises.push(
-        readFile(options, node.attrs[options.attribute])
+        () => readFile(options, node.attrs[options.attribute])
           .then(processNodeContentWithPosthtml(node, options))
           .then(tree => { // Recursively call parse with node's content tree
             return parse(Object.assign({}, options, {
@@ -107,7 +107,11 @@ function parse(options) {
       return node;
     });
 
-    return promises.length > 0 ? Promise.all(promises).then(() => tree) : tree;
+    for (const promise of promises.reverse()) {
+      await promise()
+    }
+
+    return tree;
   };
 }
 
