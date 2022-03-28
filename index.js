@@ -110,7 +110,8 @@ function parse(options) {
     return promises
       .reverse()
       .concat(() => tree)
-      .reduce((prev, task) => prev.then(task), Promise.resolve());
+      // eslint-disable-next-line unicorn/no-array-reduce
+      .reduce((previous, task) => previous.then(task), Promise.resolve());
   };
 }
 
