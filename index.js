@@ -65,7 +65,7 @@ function readFile(options, href) {
 * @return {Promise | Object} [posthtml tree or promise]
 */
 function parse(options) {
-  return async function (tree) {
+  return function (tree) {
     const promises = [];
 
     tree.match(match(`${options.tag}[${options.attribute}]`), node => {
@@ -107,11 +107,10 @@ function parse(options) {
       return node;
     });
 
-    for (const promise of promises.reverse()) {
-      await promise()
-    }
-
-    return tree;
+    return promises
+      .reverse()
+      .concat(() => tree)
+      .reduce((prev, task) => prev.then(task), Promise.resolve());
   };
 }
 
