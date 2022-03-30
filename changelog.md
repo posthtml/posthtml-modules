@@ -1,5 +1,14 @@
+## <small>0.8.1 (2022-03-30)</small>
+
+* fix: lint ([91a26c5](https://github.com/canvaskisa/posthtml-modules/commit/91a26c5))
+* fix: nested modules with locals ([f49a6fe](https://github.com/canvaskisa/posthtml-modules/commit/f49a6fe))
+* fix: transform async for of loop to reducer ([e57032b](https://github.com/canvaskisa/posthtml-modules/commit/e57032b))
+
+
+
 ## 0.8.0 (2021-12-01)
 
+* 0.8.0 ([9c168c5](https://github.com/canvaskisa/posthtml-modules/commit/9c168c5))
 * feat: add attribute/value to locals, close #76 ([2b96b22](https://github.com/canvaskisa/posthtml-modules/commit/2b96b22)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
 * docs: add attribute/value to locals, #76 ([5a79b35](https://github.com/canvaskisa/posthtml-modules/commit/5a79b35)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
 * test: add attribute/value to locals, #76 ([2b49df4](https://github.com/canvaskisa/posthtml-modules/commit/2b49df4)), closes [#76](https://github.com/canvaskisa/posthtml-modules/issues/76)
