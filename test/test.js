@@ -197,10 +197,10 @@ test('Must parse attribute as locals', async t => {
 });
 
 test('Must use posthtml-expressions options', async t => {
-  const actual = `<module href="./test/locals.posthtml-expressions-options.spec.html" locals='{"foo":"bar"}'></module>`;
+  const actual = `<module href="./test/locals.expressions.spec.html" locals='{"foo":"bar"}'></module>`;
   const expected = `<div><i>bar</i><b>{{ ignored }}</b></div>`;
 
-  const html = await posthtml().use(plugin({posthtmlExpressionsOptions: {delimiters: ['%[', ']%']}})).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({expressions: {delimiters: ['%[', ']%']}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
