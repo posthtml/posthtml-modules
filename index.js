@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const isJSON = require('is-json');
 const posthtml = require('posthtml');
-const render = require('posthtml-render');
 const {merge, isEmpty} = require('lodash');
+const {render} = require('posthtml-render');
 const match = require('posthtml-match-helper');
 const expressions = require('posthtml-expressions');
 
