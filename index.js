@@ -37,12 +37,11 @@ function parseLocals({options, node}, optionLocals, attributeLocals) {
 
   try {
     const locals = merge({...optionLocals}, {...attrLocals}, JSON.parse(attributeLocals));
-
-    return expressions({locals});
+    return expressions({...options.expressions, locals});
   } catch {
     const locals = merge({...optionLocals}, {...attrLocals});
 
-    return expressions({locals});
+    return expressions({...options.expressions, locals});
   }
 }
 
@@ -139,6 +138,7 @@ module.exports = (options = {}) => {
   options.attribute = options.attribute || 'href';
   options.root = path.resolve(options.root || './');
   options.attributeAsLocals = options.attributeAsLocals || false;
+  options.expressions = options.expressions || {};
 
   return function (tree) {
     if (options.initial) {

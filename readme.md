@@ -74,7 +74,7 @@ Root path for modules lookup.
 Type: `array | function`\
 Default: `[]`
 
-PostHTML plugins to apply for every parsed module. 
+PostHTML plugins to apply for every parsed module.
 
 If a function provided, it will be called with module's file path.
 
@@ -127,9 +127,17 @@ All attributes on `<module></module>` will be added to [locals](#locals)
 Type: `object`\
 Default: `{}`
 
-Options for the PostHTML parser.  
+Options for the PostHTML parser.
 
 By default, [`posthtml-parser`](https://github.com/posthtml/posthtml-parser) is used.
+
+### `expressions`
+
+Type: `object`\
+Default: `{}`
+
+Options to forward to [posthtml-expressions](https://github.com/posthtml/posthtml-expressions), like custom delimiters for example. Available options can be found [here](https://github.com/posthtml/posthtml-expressions#options).
+
 
 ## Component options
 
