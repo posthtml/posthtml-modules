@@ -1,5 +1,19 @@
+## 0.9.0 (2022-05-04)
+
+* build(deps): bump minimist from 1.2.5 to 1.2.6 ([828e484](https://github.com/canvaskisa/posthtml-modules/commit/828e484))
+* build(deps): bump posthtml-match-helper from 1.0.2 to 1.0.3 ([fc9f834](https://github.com/canvaskisa/posthtml-modules/commit/fc9f834))
+* build(deps): bump shelljs from 0.8.4 to 0.8.5 ([696e339](https://github.com/canvaskisa/posthtml-modules/commit/696e339))
+* build(deps): bump trim-off-newlines from 1.0.1 to 1.0.3 ([90dd232](https://github.com/canvaskisa/posthtml-modules/commit/90dd232))
+* build(deps): update dependencies ([503c294](https://github.com/canvaskisa/posthtml-modules/commit/503c294))
+* add plugin option to forward options to posthtml-expressions ([0ce0a96](https://github.com/canvaskisa/posthtml-modules/commit/0ce0a96))
+* add posthtmlExpressionsOptions option documentation to readme ([a514a28](https://github.com/canvaskisa/posthtml-modules/commit/a514a28))
+* rename posthtmlExpressionsOptions to expressions for consitency among other posthtml plugins ([3bc25e0](https://github.com/canvaskisa/posthtml-modules/commit/3bc25e0))
+
+
+
 ## <small>0.8.1 (2022-03-30)</small>
 
+* 0.8.1 ([c608fbf](https://github.com/canvaskisa/posthtml-modules/commit/c608fbf))
 * fix: lint ([91a26c5](https://github.com/canvaskisa/posthtml-modules/commit/91a26c5))
 * fix: nested modules with locals ([f49a6fe](https://github.com/canvaskisa/posthtml-modules/commit/f49a6fe))
 * fix: transform async for of loop to reducer ([e57032b](https://github.com/canvaskisa/posthtml-modules/commit/e57032b))
