@@ -10,6 +10,7 @@
     "cli": "off",
     "xo": "off",
     "ava": "off",
-    "use-travis": "off"
+    "use-travis": "off",
+    "pkg-schema": "off"
   }
 }
