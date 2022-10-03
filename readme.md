@@ -202,6 +202,79 @@ Example:
 </div>
 ```
 
+### `customTagRoot`
+
+Type: `object | string`\
+Default: `'/'`
+
+Used for custom tag like Blade template engine, e.g. `<x-button>`.
+Set the path to module from the `options.root` as string or array of paths for multiple folders ['modules', 'components', 'page/modules'].
+
+Example:
+
+```html
+<!-- button.html -->
+<button class="{{ class }}"><content></content></button>
+```
+
+```html
+<!-- index.html -->
+<x-button class="btn btn-primary">Submit</x-button>
+```
+
+### Result
+
+```html
+<button class="btn btn-primary">Submit</button>
+```
+
+### `customTagNamespaces`
+
+Type: `object`\
+Default: `{}`
+
+Similar to Blade template engine `componentNamespace`, you can map any module namespace to path.
+
+Example:
+
+```js
+// Pass to options an object with namespace's name and namespace's path like below
+plugin({customTagNamespaces: {'theme-dark': '/theme-dark/', 'theme-light': '/theme-light/'}})
+```
+
+```html
+<!-- Now you can use the namespace like below example -->
+<x-theme-dark::button>Submit</x-theme-dark::button>
+```
+
+### Result
+
+```html
+<!-- The output from module inside /theme-dark/button.html -->
+<button class="btn btn-primary">Submit</button>
+```
+
+### `customTagExtension`
+
+Type: `string`\
+Default: `html`
+
+Set module's custom tag file extension.
+
+### `customTagPrefix`
+
+Type: `string`\
+Default: `x-`
+
+Change module's custom tag prefix.
+
+### `customTagRegExp`
+
+Type: `object`\
+Default: `new RegExp(^${options.customTagPrefix}, 'i')`
+
+Change the regular expression for find the tag.
+
 [npm]: https://img.shields.io/npm/v/posthtml-modules.svg
 [npm-url]: https://npmjs.com/package/posthtml-modules
 

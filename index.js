@@ -67,7 +67,17 @@ function parse(options) {
   return function (tree) {
     const promises = [];
 
-    tree.match(match(`${options.tag}[${options.attribute}]`), node => {
+    tree.match(match([`${options.tag}[${options.attribute}]`, {tag: options.customTagRegExp}]), node => {
+      if (options.customTagRegExp.test(node.tag)) {
+        setCustomTagHref(node, options);
+
+        // When throw error when module not found by tag namespace or by tag path,
+        //  then this condition will never occur
+        // if (!node.attrs[options.attribute]) {
+        //   return node;
+        // }
+      }
+
       promises.push(
         () => readFile(options, node.attrs[options.attribute])
           .then(processNodeContentWithPosthtml(node, options))
@@ -128,6 +138,55 @@ function processWithPostHtml(options, plugins, from, content, prepend) {
   )).process(render(content), options).then(result => result.tree);
 }
 
+/**
+ * Set href for custom tag
+ *
+ * @param  {Object} node [posthtml element object]
+ * @param  {Object} options [posthtml options]
+ * @return {void}
+ */
+function setCustomTagHref(node, options) {
+  if (!node.attrs) {
+    node.attrs = {};
+  }
+
+  let {tag} = node;
+
+  let customTagRoot;
+  let namespace;
+  if (tag.includes('::')) {
+    [namespace, tag] = tag.split('::');
+    customTagRoot = options.customTagNamespaces[namespace.replace(options.customTagPrefix, '')];
+  }
+
+  // Get module filename from tag name by removing "x-"
+  //  and replacing dot "." with slash "/" and appending extension
+  const customTagFile = tag
+    .replace(options.customTagPrefix, '')
+    .split('.')
+    .join('/')
+    .concat('.', options.customTagExtension);
+
+  if (!customTagRoot) {
+    // Search for module file within all roots
+    const customTagRoots = Array.isArray(options.customTagRoot) ? options.customTagRoot : [options.customTagRoot];
+    customTagRoot = customTagRoots.find(root => fs.existsSync(`${options.root}${root}${customTagFile}`));
+  } else if (!fs.existsSync(`${options.root}${customTagRoot}${customTagFile}`)) {
+    // Module not found in defined namespace
+    throw new Error(`The module ${namespace}::${tag} was not found in defined namespace's path ${customTagRoot}.`);
+    // Or just set customTagRoot to null will return node as-is
+    // customTagRoot = null;
+  }
+
+  if (customTagRoot) {
+    // Set attrs "href" when file was found
+    node.attrs[options.attribute] = `${customTagRoot}${customTagFile}`;
+  } else {
+    // Or just not throw error will return node as-is
+    throw new Error(`The module ${tag} was not found in any defined path.`);
+  }
+}
+
 module.exports = (options = {}) => {
   options.from = options.from || '';
   options.locals = options.locals || {};
@@ -139,6 +198,11 @@ module.exports = (options = {}) => {
   options.root = path.resolve(options.root || './');
   options.attributeAsLocals = options.attributeAsLocals || false;
   options.expressions = options.expressions || {};
+  options.customTagRoot = options.customTagPaths || '/';
+  options.customTagNamespaces = options.customTagNamespaces || {};
+  options.customTagExtension = options.customTagExtension || 'html';
+  options.customTagPrefix = options.customTagPrefix || 'x-';
+  options.customTagRegExp = new RegExp(`^${options.customTagPrefix}`, 'i');
 
   return function (tree) {
     if (options.initial) {
