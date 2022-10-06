@@ -218,7 +218,7 @@ test('Must use custom folder using namespaced tag', async t => {
   let actual = `<div><x-theme-dark::button>Submit</x-theme-dark::button></div>`;
   let expected = `<div><button class="bg-dark text-light">Submit</button></div>`;
 
-  let html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': '/test/tree.spec/custom-tag/theme-dark/', 'theme-light': '/test/tree.spec/custom-tag/theme-light/'}}))
+  let html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': './test/tree.spec/custom-tag/theme-dark/', 'theme-light': './test/tree.spec/custom-tag/theme-light/'}}))
     .process(actual)
     .then(result => clean(result.html));
 
@@ -227,7 +227,7 @@ test('Must use custom folder using namespaced tag', async t => {
   actual = `<div><x-theme-light::button>Submit</x-theme-light::button></div>`;
   expected = `<div><button class="bg-light text-dark">Submit</button></div>`;
 
-  html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': '/test/tree.spec/custom-tag/theme-dark/', 'theme-light': '/test/tree.spec/custom-tag/theme-light/'}}))
+  html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': './test/tree.spec/custom-tag/theme-dark/', 'theme-light': './test/tree.spec/custom-tag/theme-light/'}}))
     .process(actual)
     .then(result => clean(result.html));
 
@@ -236,7 +236,7 @@ test('Must use custom folder using namespaced tag', async t => {
 
 test(`Must fail when module’s doesn't exist in specified namespace`, async t => {
   const actual = `<div><x-namespace::nonexisting>Non-existing namespace</x-namespace::nonexisting></div>`;
-  await t.throwsAsync(async () => posthtml().use(plugin({customTagNamespaces: {namespace: '/test/tree.spec/custom-tag/theme-dark/'}})).process(actual));
+  await t.throwsAsync(async () => posthtml().use(plugin({customTagNamespaces: {namespace: './test/tree.spec/custom-tag/theme-dark/'}})).process(actual));
 });
 
 test('Must use custom tag prefix if it was provided in options', async t => {
@@ -260,4 +260,22 @@ test('Must find file inside multiple specified tag paths', async t => {
 test(`Must fail when module’s doesn't exist in any custom tag paths`, async t => {
   const actual = `<div><x-nonexisting>Non-existing namespace</x-nonexisting></div>`;
   await t.throwsAsync(async () => posthtml().use(plugin({customTagPaths: ['/test/tree.spec/custom-tag/', '/test/tree.spec/custom-tag2/']})).process(actual));
+});
+
+test(`Must find module file index.html when the tag has only module folder name.`, async t => {
+  const actual = `<x-modal title="My modal title">My modal content</x-modal>`;
+  const expected = `<div><h1>My modal title</h1>My modal content</div>`;
+
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagPaths: ['/test/tree.spec/custom-tag/', '/test/tree.spec/custom-tag2/']})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test(`Must find module file index.html when the tag has only module folder name using namespace.`, async t => {
+  const actual = `<x-ui::modal>My modal content</x-ui::modal>`;
+  const expected = `<div>My modal content</div>`;
+
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: {ui: './test/tree.spec/custom-tag/'}})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
 });

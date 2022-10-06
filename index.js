@@ -10,11 +10,11 @@ const match = require('posthtml-match-helper');
 const expressions = require('posthtml-expressions');
 
 /**
-* Process every node content with posthtml
-* @param  {Object} node [posthtml element object]
-* @param  {Object} options
-* @return {Function}
-*/
+ * Process every node content with posthtml
+ * @param  {Object} node [posthtml element object]
+ * @param  {Object} options
+ * @return {Function}
+ */
 function processNodeContentWithPosthtml(node, options) {
   return function (content) {
     return processWithPostHtml(options.parser, options.plugins, path.join(path.dirname(options.from), node.attrs[options.attribute]), content, [
@@ -46,11 +46,11 @@ function parseLocals({options, node}, optionLocals, attributeLocals) {
 }
 
 /**
-* readFile
-* @param  {Object} options  [plugin options object]
-* @param  {String} href     [node's href attribute value]
-* @return {Promise<String>} [Promise with file content's]
-*/
+ * readFile
+ * @param  {Object} options  [plugin options object]
+ * @param  {String} href     [node's href attribute value]
+ * @return {Promise<String>} [Promise with file content's]
+ */
 function readFile(options, href) {
   const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
 
@@ -60,9 +60,9 @@ function readFile(options, href) {
 }
 
 /**
-* @param  {Object} options   [plugin options]
-* @return {Promise | Object} [posthtml tree or promise]
-*/
+ * @param  {Object} options   [plugin options]
+ * @return {Promise | Object} [posthtml tree or promise]
+ */
 function parse(options) {
   return function (tree) {
     const promises = [];
@@ -125,13 +125,13 @@ function parse(options) {
 }
 
 /**
-* @param  {Object} 					 options [posthtml options]
-* @param  {Array | Function} plugins [array of plugins to apply or function, which will be called with from option]
-* @param  {String}           from    [path to the processing file]
-* @param  {Object} 					 content [posthtml tree to process]
-* @param  {Array}            prepend [array of plugins to process before plugins param]
-* @return {Object}                   [processed poshtml tree]
-*/
+ * @param  {Object} 					 options [posthtml options]
+ * @param  {Array | Function} plugins [array of plugins to apply or function, which will be called with from option]
+ * @param  {String}           from    [path to the processing file]
+ * @param  {Object} 					 content [posthtml tree to process]
+ * @param  {Array}            prepend [array of plugins to process before plugins param]
+ * @return {Object}                   [processed poshtml tree]
+ */
 function processWithPostHtml(options, plugins, from, content, prepend) {
   return posthtml((prepend || []).concat(
     typeof plugins === 'function' ? plugins(from) : plugins
@@ -150,14 +150,7 @@ function setCustomTagHref(node, options) {
     node.attrs = {};
   }
 
-  let {tag} = node;
-
-  let customTagRoot;
-  let namespace;
-  if (tag.includes('::')) {
-    [namespace, tag] = tag.split('::');
-    customTagRoot = options.customTagNamespaces[namespace.replace(options.customTagPrefix, '')];
-  }
+  const {tag} = node;
 
   // Get module filename from tag name by removing "x-"
   //  and replacing dot "." with slash "/" and appending extension
@@ -167,24 +160,78 @@ function setCustomTagHref(node, options) {
     .join('/')
     .concat('.', options.customTagExtension);
 
+  // Find module by defined namespace in options.customTagNamespaces
+  //  or by defined roots in options.customTagRoot
+  //  and set the returned path
+  node.attrs[options.attribute] = tag.includes('::') ?
+    findModuleByNamespace(customTagFile.split('::'), options) :
+    findModuleByRoot(tag, customTagFile, options);
+}
+
+/**
+ * Search for module file within namespace path
+ *
+ * @param  {String} tag [tag name with namespace]
+ * @param  {String} customTagFile [filename converted from tag name with namespace included]
+ * @param  {Object} options [posthtml options]
+ * @return {String} [custom tag root where the module is found]
+ */
+function findModuleByNamespace([namespace, customTagFile], options) {
+  const customTagRoot = options.customTagNamespaces[namespace.replace(options.customTagPrefix, '')];
+
   if (!customTagRoot) {
-    // Search for module file within all roots
-    const customTagRoots = Array.isArray(options.customTagRoot) ? options.customTagRoot : [options.customTagRoot];
-    customTagRoot = customTagRoots.find(root => fs.existsSync(`${options.root}${root}${customTagFile}`));
-  } else if (!fs.existsSync(`${options.root}${customTagRoot}${customTagFile}`)) {
-    // Module not found in defined namespace
-    throw new Error(`The module ${namespace}::${tag} was not found in defined namespace's path ${customTagRoot}.`);
-    // Or just set customTagRoot to null will return node as-is
-    // customTagRoot = null;
+    throw new Error(`Unknown module namespace ${namespace}.`);
   }
 
-  if (customTagRoot) {
-    // Set attrs "href" when file was found
-    node.attrs[options.attribute] = `${customTagRoot}${customTagFile}`;
-  } else {
-    // Or just not throw error will return node as-is
-    throw new Error(`The module ${tag} was not found in any defined path.`);
+  if (!fs.existsSync(`${customTagRoot}/${customTagFile}`)) {
+    // Check if module exist in folder `tag-name/index.html`
+    customTagFile = customTagFile
+      .replace(`.${options.customTagExtension}`, '')
+      .concat('/index.', options.customTagExtension);
+
+    if (!fs.existsSync(`${customTagRoot}/${customTagFile}`)) {
+      throw new Error(`The module ${namespace}::${customTagFile} was not found in defined namespace's path ${customTagRoot}.`);
+    }
   }
+
+  // Setting options.from to bypass root
+  options.from = customTagRoot;
+
+  // Convert the href to relative path,
+  //  so that in readFile options.from it's used and not options.root
+  return customTagRoot
+    .replace(path.dirname(options.from), '')
+    .replace('/', '')
+    .concat('/', customTagFile);
+}
+
+/**
+ * Search for module file within all roots
+ *
+ * @param  {String} tag [tag name]
+ * @param  {String} customTagFile [filename converted from tag name]
+ * @param  {Object} options [posthtml options]
+ * @return {String} [custom tag root where the module is found]
+ */
+function findModuleByRoot(tag, customTagFile, options) {
+  const customTagRoots = Array.isArray(options.customTagRoot) ? options.customTagRoot : [options.customTagRoot || ''];
+
+  let customTagRoot = customTagRoots.find(customTagRoot => fs.existsSync(`${options.root}${customTagRoot}${customTagFile}`));
+
+  if (!customTagRoot) {
+    // Check if module exist in folder `tag-name/index.html`
+    customTagFile = customTagFile
+      .replace(`.${options.customTagExtension}`, '')
+      .concat('/index.', options.customTagExtension);
+
+    customTagRoot = customTagRoots.find(customTagRoot => fs.existsSync(`${options.root}${customTagRoot}${customTagFile}`));
+  }
+
+  if (!customTagRoot) {
+    throw new Error(`The module ${tag} was not found in any defined root path ${customTagRoots.join(', ')}`);
+  }
+
+  return `${customTagRoot}${customTagFile}`;
 }
 
 module.exports = (options = {}) => {
@@ -203,6 +250,10 @@ module.exports = (options = {}) => {
   options.customTagExtension = options.customTagExtension || 'html';
   options.customTagPrefix = options.customTagPrefix || 'x-';
   options.customTagRegExp = new RegExp(`^${options.customTagPrefix}`, 'i');
+
+  Object.keys(options.customTagNamespaces).forEach(namespace => {
+    options.customTagNamespaces[namespace] = path.resolve(options.customTagNamespaces[namespace]);
+  });
 
   return function (tree) {
     if (options.initial) {
