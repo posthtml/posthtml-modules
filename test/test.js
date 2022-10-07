@@ -218,7 +218,7 @@ test('Must use custom folder using namespaced tag', async t => {
   let actual = `<div><x-theme-dark::button>Submit</x-theme-dark::button></div>`;
   let expected = `<div><button class="bg-dark text-light">Submit</button></div>`;
 
-  let html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': './test/tree.spec/custom-tag/theme-dark/', 'theme-light': './test/tree.spec/custom-tag/theme-light/'}}))
+  let html = await posthtml().use(plugin({customTagNamespaces: [{name: 'theme-dark', root: './test/tree.spec/custom-tag/theme-dark/'}, {name: 'theme-light', root: './test/tree.spec/custom-tag/theme-light/'}]}))
     .process(actual)
     .then(result => clean(result.html));
 
@@ -227,7 +227,7 @@ test('Must use custom folder using namespaced tag', async t => {
   actual = `<div><x-theme-light::button>Submit</x-theme-light::button></div>`;
   expected = `<div><button class="bg-light text-dark">Submit</button></div>`;
 
-  html = await posthtml().use(plugin({customTagNamespaces: {'theme-dark': './test/tree.spec/custom-tag/theme-dark/', 'theme-light': './test/tree.spec/custom-tag/theme-light/'}}))
+  html = await posthtml().use(plugin({customTagNamespaces: [{name: 'theme-dark', root: './test/tree.spec/custom-tag/theme-dark/'}, {name: 'theme-light', root: './test/tree.spec/custom-tag/theme-light/'}]}))
     .process(actual)
     .then(result => clean(result.html));
 
@@ -235,8 +235,8 @@ test('Must use custom folder using namespaced tag', async t => {
 });
 
 test(`Must fail when module’s doesn't exist in specified namespace`, async t => {
-  const actual = `<div><x-namespace::nonexisting>Non-existing namespace</x-namespace::nonexisting></div>`;
-  await t.throwsAsync(async () => posthtml().use(plugin({customTagNamespaces: {namespace: './test/tree.spec/custom-tag/theme-dark/'}})).process(actual));
+  const actual = `<div><x-namespace::nonexisting>Non-existing module in existing namespace</x-namespace::nonexisting></div>`;
+  await t.throwsAsync(async () => posthtml().use(plugin({customTagNamespaces: [{name: 'namespace', root: './test/tree.spec/custom-tag/theme-dark/'}]})).process(actual));
 });
 
 test('Must use custom tag prefix if it was provided in options', async t => {
@@ -275,7 +275,7 @@ test(`Must find module file index.html when the tag has only module folder name 
   const actual = `<x-ui::modal>My modal content</x-ui::modal>`;
   const expected = `<div>My modal content</div>`;
 
-  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: {ui: './test/tree.spec/custom-tag/'}})).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: [{name: 'ui', root: './test/tree.spec/custom-tag/'}]})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -284,7 +284,7 @@ test(`Must find namespaced module by using custom namespace separator.`, async t
   const actual = `<x-ui__modal>My modal content</x-ui__modal>`;
   const expected = `<div>My modal content</div>`;
 
-  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaceSeparator: '__', customTagNamespaces: {ui: './test/tree.spec/custom-tag/'}})).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaceSeparator: '__', customTagNamespaces: [{name: 'ui', root: './test/tree.spec/custom-tag/'}]})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -292,4 +292,63 @@ test(`Must find namespaced module by using custom namespace separator.`, async t
 test(`Must fail when module’s namespace is not defined`, async t => {
   const actual = `<div><x-nonexisting::button>Non-existing namespace</x-nonexisting::button></div>`;
   await t.throwsAsync(async () => posthtml().use(plugin()).process(actual));
+});
+
+test('Must include default fallback folder when module is not found in namespaced path', async t => {
+  const actual = `<div><x-my-theme::button class="my-theme">Submit</x-my-theme::button></div>`;
+  const expected = `<div><button class="my-theme">Submit</button></div>`;
+
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagPaths: ['/test/tree.spec/custom-tag/', '/test/tree.spec/custom-tag2/'], customTagNamespaceFallback: true, customTagNamespaces: [{name: 'my-theme', root: './test/tree.spec/custom-tag/my-theme/'}]}))
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must include custom overridden module when is defined in namespace even when exist in namespace root', async t => {
+  let actual = `<div><x-theme-dark::button class="my-custom-button">Submit</x-theme-dark::button></div>`;
+  let expected = `<div><button class="my-custom-button">Submit</button></div>`;
+
+  let html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: [{name: 'theme-dark', root: './test/tree.spec/custom-tag/theme-dark/', custom: './test/tree.spec/custom-tag/'}]}))
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+
+  // Test index.html
+  actual = `<x-theme-dark::modal>My modal content</x-theme-dark::modal>`;
+  expected = `<div>My modal content</div>`;
+
+  html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: [{name: 'theme-dark', root: './test/tree.spec/custom-tag/theme-dark/', custom: './test/tree.spec/custom-tag/'}]}))
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must include fallback module when is defined in namespace when the module is not found in namespace root', async t => {
+  let actual = `<x-theme-light::label>My label</x-theme-light::label>`;
+  let expected = `<label>My label</label>`;
+
+  let html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: [{name: 'theme-light', root: './test/tree.spec/custom-tag/theme-light/', fallback: './test/tree.spec/custom-tag/'}]}))
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+
+  // Test index.html
+  actual = `<x-theme-light::modal>My modal content</x-theme-light::modal>`;
+  expected = `<div>My modal content</div>`;
+
+  html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaces: [{name: 'theme-light', root: './test/tree.spec/custom-tag/theme-light/', fallback: './test/tree.spec/custom-tag/'}]}))
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test('Must fail when module is not found in namespace path nor in any defined custom tag roots as fallback', async t => {
+  const actual = `<div><x-theme-dark::nonexisting>Non-existing namespace</x-theme-dark::nonexisting></div>`;
+
+  await t.throwsAsync(async () => posthtml().use(plugin({attributeAsLocals: true, customTagPaths: ['/test/tree.spec/custom-tag/', '/test/tree.spec/custom-tag2/'], customTagNamespaceFallback: true, customTagNamespaces: [{name: 'theme-dark', root: './test/tree.spec/custom-tag/theme-dark/'}]})).process(actual));
 });

@@ -165,7 +165,7 @@ function setCustomTagHref(node, options) {
   //  or by defined roots in options.customTagRoot
   //  and set the returned path
   node.attrs[options.attribute] = tag.includes(options.customTagNamespaceSeparator) ?
-    findModuleByNamespace(customTagFile.split(options.customTagNamespaceSeparator), options) :
+    findModuleByNamespace(tag, customTagFile.split(options.customTagNamespaceSeparator), options) :
     findModuleByRoot(tag, customTagFile, options);
 }
 
@@ -173,34 +173,63 @@ function setCustomTagHref(node, options) {
  * Search for module file within namespace path
  *
  * @param  {String} tag [tag name with namespace]
- * @param  {String} customTagFile [filename converted from tag name with namespace included]
+ * @param  {String} namespace [tag's namespace]
+ * @param  {String} customTagFile [filename converted from tag name]
  * @param  {Object} options [posthtml options]
  * @return {String} [custom tag root where the module is found]
  */
-function findModuleByNamespace([namespace, customTagFile], options) {
-  const customTagRoot = options.customTagNamespaces[namespace.replace(options.customTagPrefix, '')];
+function findModuleByNamespace(tag, [namespace, customTagFile], options) {
+  const customTagNamespace = options.customTagNamespaces.find(n => n.name === namespace.replace(options.customTagPrefix, ''));
 
-  if (!customTagRoot) {
+  if (!customTagNamespace) {
     throw new Error(`Unknown module namespace ${namespace}.`);
   }
 
-  if (!fs.existsSync(path.join(customTagRoot, customTagFile))) {
-    // Check if module exist in folder `tag-name/index.html`
-    customTagFile = customTagFile
-      .replace(`.${options.customTagExtension}`, '')
-      .concat('/index.', options.customTagExtension);
+  // Used to check module by index.html
+  const customTagIndexFile = customTagFile
+    .replace(`.${options.customTagExtension}`, '')
+    .concat(path.sep, 'index.', options.customTagExtension);
 
-    if (!fs.existsSync(path.join(customTagRoot, customTagFile))) {
-      throw new Error(`The module ${namespace}${options.customTagNamespaceSeparator}${customTagFile} was not found in defined namespace's path ${customTagRoot}.`);
+  // First check in defined namespace's custom root if module was overridden
+  let foundByIndexFile = false;
+  if (customTagNamespace.custom && (fs.existsSync(path.join(customTagNamespace.custom, customTagFile)) || (foundByIndexFile = fs.existsSync(path.join(customTagNamespace.custom, customTagIndexFile))))) {
+    customTagNamespace.root = customTagNamespace.custom;
+    if (foundByIndexFile) {
+      customTagFile = customTagIndexFile;
+    }
+    // else check in defined namespace's root
+  } else if (!fs.existsSync(path.join(customTagNamespace.root, customTagFile))) {
+    if (fs.existsSync(path.join(customTagNamespace.root, customTagIndexFile))) {
+      // Module found in folder `tag-name/index.html`
+      customTagFile = customTagIndexFile;
+    } else if (customTagNamespace.fallback && (fs.existsSync(path.join(customTagNamespace.fallback, customTagFile)) || (foundByIndexFile = fs.existsSync(path.join(customTagNamespace.fallback, customTagIndexFile))))) {
+      // Module found in defined namespace fallback
+      customTagNamespace.root = customTagNamespace.fallback;
+      if (foundByIndexFile) {
+        customTagFile = customTagIndexFile;
+      }
+    } else if (options.customTagNamespaceFallback) {
+      // Last resort: try to find module by defined roots as fallback
+      try {
+        // Passing tag name without namespace, although it's only used
+        // for error message which in this case it's not even used.
+        // But passing it correctly in case in future we do something
+        // with tag name inside findModuleByRoot()
+        return findModuleByRoot(tag.replace(namespace, '').replace(options.customTagNamespaceSeparator, ''), customTagFile, options);
+      } catch {
+        throw new Error(`The module ${tag} was not found in the defined namespace's root ${customTagNamespace.root} nor in any defined custom tag roots.`);
+      }
+    } else {
+      throw new Error(`The module ${tag} was not found in the defined namespace's path ${customTagNamespace.root}.`);
     }
   }
 
   // Setting options.from to bypass root
-  options.from = customTagRoot;
+  options.from = customTagNamespace.root;
 
   // Convert the href to relative path,
   //  so that in readFile options.from it's used and not options.root
-  return customTagRoot
+  return customTagNamespace.root
     .replace(path.dirname(options.from), '')
     .replace(path.sep, '')
     .concat(path.sep, customTagFile);
@@ -247,14 +276,23 @@ module.exports = (options = {}) => {
   options.attributeAsLocals = options.attributeAsLocals || false;
   options.expressions = options.expressions || {};
   options.customTagRoot = options.customTagPaths || '/';
-  options.customTagNamespaces = options.customTagNamespaces || {};
+  options.customTagNamespaces = options.customTagNamespaces || [];
   options.customTagNamespaceSeparator = options.customTagNamespaceSeparator || '::';
+  options.customTagNamespaceFallback = options.customTagNamespaceFallback || false;
   options.customTagExtension = options.customTagExtension || 'html';
   options.customTagPrefix = options.customTagPrefix || 'x-';
   options.customTagRegExp = new RegExp(`^${options.customTagPrefix}`, 'i');
 
-  Object.keys(options.customTagNamespaces).forEach(namespace => {
-    options.customTagNamespaces[namespace] = path.resolve(options.customTagNamespaces[namespace]);
+  options.customTagNamespaces.forEach((namespace, index) => {
+    options.customTagNamespaces[index].root = path.resolve(namespace.root);
+
+    if (namespace.fallback) {
+      options.customTagNamespaces[index].fallback = path.resolve(namespace.fallback);
+    }
+
+    if (namespace.custom) {
+      options.customTagNamespaces[index].custom = path.resolve(namespace.custom);
+    }
   });
 
   return function (tree) {
