@@ -326,7 +326,7 @@ test('Must include custom overridden module when is defined in namespace even wh
   t.is(html, expected);
 });
 
-test('Must include fallback module when is defined in namespace when the module is not found in namespace root', async t => {
+test('Must include fallback module when is defined in namespace and when the module is not found in namespace root', async t => {
   let actual = `<x-theme-light::label>My label</x-theme-light::label>`;
   let expected = `<label>My label</label>`;
 
