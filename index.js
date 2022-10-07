@@ -252,7 +252,7 @@ function findModuleByRoot(tag, customTagFile, options) {
     // Check if module exist in folder `tag-name/index.html`
     customTagFile = customTagFile
       .replace(`.${options.customTagExtension}`, '')
-      .concat('/index.', options.customTagExtension);
+      .concat(path.sep, 'index.', options.customTagExtension);
 
     customTagRoot = customTagRoots.find(customTagRoot => fs.existsSync(`${options.root}${customTagRoot}${customTagFile}`));
   }
