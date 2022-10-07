@@ -8,6 +8,7 @@ const {merge, isEmpty} = require('lodash');
 const {render} = require('posthtml-render');
 const match = require('posthtml-match-helper');
 const expressions = require('posthtml-expressions');
+const customTagFolderSeparator = '.';
 
 /**
  * Process every node content with posthtml
@@ -156,15 +157,15 @@ function setCustomTagHref(node, options) {
   //  and replacing dot "." with slash "/" and appending extension
   const customTagFile = tag
     .replace(options.customTagPrefix, '')
-    .split('.')
-    .join('/')
-    .concat('.', options.customTagExtension);
+    .split(customTagFolderSeparator)
+    .join(path.sep)
+    .concat(customTagFolderSeparator, options.customTagExtension);
 
   // Find module by defined namespace in options.customTagNamespaces
   //  or by defined roots in options.customTagRoot
   //  and set the returned path
-  node.attrs[options.attribute] = tag.includes('::') ?
-    findModuleByNamespace(customTagFile.split('::'), options) :
+  node.attrs[options.attribute] = tag.includes(options.customTagNamespaceSeparator) ?
+    findModuleByNamespace(customTagFile.split(options.customTagNamespaceSeparator), options) :
     findModuleByRoot(tag, customTagFile, options);
 }
 
@@ -183,14 +184,14 @@ function findModuleByNamespace([namespace, customTagFile], options) {
     throw new Error(`Unknown module namespace ${namespace}.`);
   }
 
-  if (!fs.existsSync(`${customTagRoot}/${customTagFile}`)) {
+  if (!fs.existsSync(path.join(customTagRoot, customTagFile))) {
     // Check if module exist in folder `tag-name/index.html`
     customTagFile = customTagFile
       .replace(`.${options.customTagExtension}`, '')
       .concat('/index.', options.customTagExtension);
 
-    if (!fs.existsSync(`${customTagRoot}/${customTagFile}`)) {
-      throw new Error(`The module ${namespace}::${customTagFile} was not found in defined namespace's path ${customTagRoot}.`);
+    if (!fs.existsSync(path.join(customTagRoot, customTagFile))) {
+      throw new Error(`The module ${namespace}${options.customTagNamespaceSeparator}${customTagFile} was not found in defined namespace's path ${customTagRoot}.`);
     }
   }
 
@@ -201,8 +202,8 @@ function findModuleByNamespace([namespace, customTagFile], options) {
   //  so that in readFile options.from it's used and not options.root
   return customTagRoot
     .replace(path.dirname(options.from), '')
-    .replace('/', '')
-    .concat('/', customTagFile);
+    .replace(path.sep, '')
+    .concat(path.sep, customTagFile);
 }
 
 /**
@@ -247,6 +248,7 @@ module.exports = (options = {}) => {
   options.expressions = options.expressions || {};
   options.customTagRoot = options.customTagPaths || '/';
   options.customTagNamespaces = options.customTagNamespaces || {};
+  options.customTagNamespaceSeparator = options.customTagNamespaceSeparator || '::';
   options.customTagExtension = options.customTagExtension || 'html';
   options.customTagPrefix = options.customTagPrefix || 'x-';
   options.customTagRegExp = new RegExp(`^${options.customTagPrefix}`, 'i');

@@ -230,16 +230,17 @@ Example:
 
 ### `customTagNamespaces`
 
-Type: `object`\
+Type: `object`
 Default: `{}`
 
-Similar to Blade template engine `componentNamespace`, you can map any module namespace to path.
+Similar to Blade template engine `componentNamespace`, you can map any module namespace to a top level path.
+When using namespace's path the `customTagRoots` are not used for such tags, instead namespace has its own top level path.
 
 Example:
 
 ```js
 // Pass to options an object with namespace's name and namespace's path like below
-plugin({customTagNamespaces: {'theme-dark': '/theme-dark/', 'theme-light': '/theme-light/'}})
+plugin({customTagNamespaces: {'theme-dark': './theme-dark/modules/', 'theme-light': './theme-light/modules/'}})
 ```
 
 ```html
@@ -254,23 +255,30 @@ plugin({customTagNamespaces: {'theme-dark': '/theme-dark/', 'theme-light': '/the
 <button class="btn btn-primary">Submit</button>
 ```
 
+### `customTagNamespaceSeparator`
+
+Type: `string`
+Default: `::`
+
+Change module's namespace separator.
+
 ### `customTagExtension`
 
-Type: `string`\
+Type: `string`
 Default: `html`
 
 Set module's custom tag file extension.
 
 ### `customTagPrefix`
 
-Type: `string`\
+Type: `string`
 Default: `x-`
 
 Change module's custom tag prefix.
 
 ### `customTagRegExp`
 
-Type: `object`\
+Type: `object`
 Default: `new RegExp(^${options.customTagPrefix}, 'i')`
 
 Change the regular expression for find the tag.

@@ -279,3 +279,17 @@ test(`Must find module file index.html when the tag has only module folder name 
 
   t.is(html, expected);
 });
+
+test(`Must find namespaced module by using custom namespace separator.`, async t => {
+  const actual = `<x-ui__modal>My modal content</x-ui__modal>`;
+  const expected = `<div>My modal content</div>`;
+
+  const html = await posthtml().use(plugin({attributeAsLocals: true, customTagNamespaceSeparator: '__', customTagNamespaces: {ui: './test/tree.spec/custom-tag/'}})).process(actual).then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test(`Must fail when module’s namespace is not defined`, async t => {
+  const actual = `<div><x-nonexisting::button>Non-existing namespace</x-nonexisting::button></div>`;
+  await t.throwsAsync(async () => posthtml().use(plugin()).process(actual));
+});
