@@ -99,7 +99,7 @@ test('Must not parse locals if locals prop is passed but is not a valid JSON str
   const actual = `<div class="test"><module href="./test/locals.spec.html" locals="test">Test</module></div>`;
   const expected = `<div class="test"><button type="button">foo is: undefined - Test</button></div>`;
 
-  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -108,7 +108,7 @@ test('Must not try to parse locals if locals prop is missing', async t => {
   const actual = `<div class="test"><module href="./test/locals.spec.html">Test</module></div>`;
   const expected = `<div class="test"><button type="button">foo is: undefined - Test</button></div>`;
 
-  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -117,7 +117,7 @@ test('Must not parse locals if locals prop is passed but is empty', async t => {
   const actual = `<div class="test"><module href="./test/locals.spec.html" locals="">Test</module></div>`;
   const expected = `<div class="test"><button type="button">foo is: undefined - Test</button></div>`;
 
-  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -144,7 +144,7 @@ test('Must parse attribute locals passed to <content>', async t => {
   const actual = `<module href="./test/locals.option.spec.html" locals='{"inlineFoo": "bar"}'>{{ optionFoo }}</module>`;
   const expected = `<div>    Locals attribute: bar    Locals option: undefined    undefined</div>`;
 
-  const html = await posthtml().use(plugin()).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -153,7 +153,7 @@ test('Must parse options locals passed to <content>', async t => {
   const actual = `<module href="./test/locals.option.spec.html">{{ optionFoo }}</module>`;
   const expected = `<div>    Locals attribute: undefined    Locals option: optionBar    optionBar</div>`;
 
-  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}})).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}, expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
@@ -171,7 +171,7 @@ test('Must work with locals provided in options but no content passed', async t 
   const actual = `<module href="./test/locals.option.spec.html"></module>`;
   const expected = `<div>    Locals attribute: undefined    Locals option: optionBar    </div>`;
 
-  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}})).process(actual).then(result => clean(result.html));
+  const html = await posthtml().use(plugin({locals: {optionFoo: 'optionBar'}, expressions: {strictMode: false}})).process(actual).then(result => clean(result.html));
 
   t.is(html, expected);
 });
