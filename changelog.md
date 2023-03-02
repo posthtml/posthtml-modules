@@ -1,13 +1,23 @@
+## <small>0.9.1 (2023-03-02)</small>
+
+* build: update dep dev ([4b9b434](https://github.com/canvaskisa/posthtml-modules/commit/4b9b434))
+* test: fix after update expression ([a816dd7](https://github.com/canvaskisa/posthtml-modules/commit/a816dd7))
+* fixes #33 ([6596018](https://github.com/canvaskisa/posthtml-modules/commit/6596018)), closes [#33](https://github.com/canvaskisa/posthtml-modules/issues/33)
+* style: off pkg-schema for clinton ([e1d4df4](https://github.com/canvaskisa/posthtml-modules/commit/e1d4df4))
+
+
+
 ## 0.9.0 (2022-05-04)
 
+* 0.9.0 ([28c177a](https://github.com/canvaskisa/posthtml-modules/commit/28c177a))
+* add plugin option to forward options to posthtml-expressions ([0ce0a96](https://github.com/canvaskisa/posthtml-modules/commit/0ce0a96))
+* add posthtmlExpressionsOptions option documentation to readme ([a514a28](https://github.com/canvaskisa/posthtml-modules/commit/a514a28))
+* rename posthtmlExpressionsOptions to expressions for consitency among other posthtml plugins ([3bc25e0](https://github.com/canvaskisa/posthtml-modules/commit/3bc25e0))
 * build(deps): bump minimist from 1.2.5 to 1.2.6 ([828e484](https://github.com/canvaskisa/posthtml-modules/commit/828e484))
 * build(deps): bump posthtml-match-helper from 1.0.2 to 1.0.3 ([fc9f834](https://github.com/canvaskisa/posthtml-modules/commit/fc9f834))
 * build(deps): bump shelljs from 0.8.4 to 0.8.5 ([696e339](https://github.com/canvaskisa/posthtml-modules/commit/696e339))
 * build(deps): bump trim-off-newlines from 1.0.1 to 1.0.3 ([90dd232](https://github.com/canvaskisa/posthtml-modules/commit/90dd232))
 * build(deps): update dependencies ([503c294](https://github.com/canvaskisa/posthtml-modules/commit/503c294))
-* add plugin option to forward options to posthtml-expressions ([0ce0a96](https://github.com/canvaskisa/posthtml-modules/commit/0ce0a96))
-* add posthtmlExpressionsOptions option documentation to readme ([a514a28](https://github.com/canvaskisa/posthtml-modules/commit/a514a28))
-* rename posthtmlExpressionsOptions to expressions for consitency among other posthtml plugins ([3bc25e0](https://github.com/canvaskisa/posthtml-modules/commit/3bc25e0))
 
 
 
