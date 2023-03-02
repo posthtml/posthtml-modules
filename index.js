@@ -51,8 +51,15 @@ function parseLocals({options, node}, optionLocals, attributeLocals) {
 * @param  {String} href     [node's href attribute value]
 * @return {Promise<String>} [Promise with file content's]
 */
-function readFile(options, href) {
+function readFile(options, href, tree) {
   const filePath = path.join(path.isAbsolute(href) ? options.root : path.dirname(options.from), href);
+
+  if (tree.messages) {
+    tree.messages.push({
+      type: 'dependency',
+      file: filePath
+    });
+  }
 
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (error, response) => error ? reject(error) : resolve(response));
@@ -69,7 +76,7 @@ function parse(options) {
 
     tree.match(match(`${options.tag}[${options.attribute}]`), node => {
       promises.push(
-        () => readFile(options, node.attrs[options.attribute])
+        () => readFile(options, node.attrs[options.attribute], tree)
           .then(processNodeContentWithPosthtml(node, options))
           .then(tree => { // Recursively call parse with node's content tree
             return parse(Object.assign({}, options, {
