@@ -2,7 +2,7 @@ const test = require('ava');
 const plugin = require('..');
 const posthtml = require('posthtml');
 
-const clean = html => html.replace(/(\n|\t)/g, '').trim();
+const clean = html => html.replace(/(\n|\t|\r)/g, '').trim();
 
 test('Must include html', async t => {
   const actual = `<div><module href="./test/test.spec.html"></module></div>`;
